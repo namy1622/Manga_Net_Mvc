@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+
+<div class="row">
+    <div class="col-md-2">
+
+    </div>
+
+    <div class=" col-md-9 container d-flex mt-3" style=" justify-content: center;">
+        <div class="row justify-content-center">
+            @for (int i = 0; i < 20; i++)
+            {
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <div class="card-cus card position-relative">
+
+                        <div class="card-background"
+                            style="  background-image: url('https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg');">
+                        </div>
+
+                        <div class="card-body position-relative">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Nội dung Card.</p>
+                            <a href="#" class=" btn-i btn">Click Card</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+ <div class="col-md-1">
+
+    </div>
+    
+</div>

@@ -1,0 +1,19 @@
+
+
+/* Card */
+
+
+card-background:hover {
+    opacity: 0.5
+}
+
+.card-cus{
+    border-radius: 10px;
+}
+
+.btn-i{
+   opacity: 0.8;
+   background: #49d596;
+}
+/* end Card */
+

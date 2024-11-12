@@ -1,0 +1,89 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background: #B4B4B2;
+}
+
+.nav{
+  background: #27403E;
+  border-radius: 0px  0px  15px  15px;
+}
+
+.name-branch{
+  padding-left: 40px;
+  color: #ffff;
+  font-weight: bold;
+}
+
+
+
+.dropdown-it{
+  
+}
+
+.border-drop{
+  border-radius: 15px;
+  background-color: #50827e;
+  border:#27403E solid 3px;
+}
+.border-drop:hover{
+  background: #416b69;
+}
+
+
+
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5; /* Điều chỉnh độ mờ của hình nền */
+  z-index: 0;
+}
+
+
+.search {
+  margin-right: 10%;
+  margin-left: auto;
+}
+
+.search-icon {
+  width: 20%;
+  height: 100%;
+  border-radius: 0 15px 15px 0;
+
+}
+
+.search-input {
+
+  border-radius: 15px 0 0 15px;
+  background: #ffff;
+
+
+}
