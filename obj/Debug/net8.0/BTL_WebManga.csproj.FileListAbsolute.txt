@@ -298,3 +298,4 @@ C:\OneDrive_HUMG\OneDrive - Hanoi University of Mining and Geology\Ki_1_2024_202
 C:\OneDrive_HUMG\OneDrive - Hanoi University of Mining and Geology\Ki_1_2024_2025\Net2\BTL\Source\BTL_WebManga\obj\Debug\net8.0\BTL_WebM.307BF669.Up2Date
 C:\OneDrive_HUMG\OneDrive - Hanoi University of Mining and Geology\Ki_1_2024_2025\Net2\BTL\Source\BTL_WebManga\bin\Debug\net8.0\package.json
 C:\OneDrive_HUMG\OneDrive - Hanoi University of Mining and Geology\Ki_1_2024_2025\Net2\BTL\Source\BTL_WebManga\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\OneDrive_HUMG\OneDrive - Hanoi University of Mining and Geology\Ki_1_2024_2025\Net2\BTL\Source\BTL_WebManga\obj\Debug\net8.0\BTL_WebManga.sourcelink.json

@@ -14,6 +14,15 @@ card-background:hover {
 .btn-i{
    opacity: 0.8;
    background: #49d596;
+
+    font-size: 13px;
+   display: inline-block; /* Đảm bảo chỉ bao quanh nội dung */
+   
+   text-align: center; /* Căn giữa nội dung */
+  
+   color: white; /* Màu chữ */
+  
+ 
 }
 /* end Card */
 
