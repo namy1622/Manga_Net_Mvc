@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BTL_WebManga")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6da2e49c560fb548caec52a3c17fb09fdfd2e0a7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d372819e62d3f1c4ec89890521ba12c66ca0eee1")]
 [assembly: System.Reflection.AssemblyProductAttribute("BTL_WebManga")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BTL_WebManga")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
