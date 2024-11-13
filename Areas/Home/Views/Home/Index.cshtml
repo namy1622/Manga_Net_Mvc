@@ -2,6 +2,10 @@
     ViewData["Title"] = "Trang chủ";
 }
 
+@{
+    var imgUrl = "https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
+}
+
 
 <div  class="row">
     <div style="background: #21A691; margin-top: -50px;" class="col-md-2 ">
@@ -16,7 +20,8 @@
                     <div class="card-cus card position-relative" style=" width: 10em; height: 200px;">
 
                         <div class="card-background"
-                            style="  background-image: url('https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg');">
+                            @* style="  background-image: url('');"> *@
+                            style="  background-image: url(@imgUrl);">
                         </div>
 
                         <div class="card-body position-absolute" style="bottom: 0; left: 0; z-index: 1; ">
