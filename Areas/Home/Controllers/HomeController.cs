@@ -4,6 +4,7 @@ using BTL_WebManga.Models;
 
 namespace BTL_WebManga.Controllers;
 
+[Area("Home")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
