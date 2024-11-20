@@ -4,42 +4,54 @@
 
 @{
     var imgUrl = "https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
+
+    var mangaList = ViewBag.MangaList as List<Manga.Home.Models.InfoMangaModels>;
+    var ogImages = ViewBag.OgImages as List<Manga.Home.Models.SeoOnPage>;
+
 }
 
 
-<div  class="row">
+<div class="row">
+
     <div style="background: #21A691; margin-top: -50px;" class="col-md-2 ">
 
     </div>
 
-    <div  class=" col-md-10 container d-flex mt-3" style=" justify-content: center;">
+    <div class=" col-md-10 container d-flex mt-3" style=" justify-content: center;">
         <div class="row justify-content-center">
-            @for (int i = 0; i < 20; i++)
+            @if (mangaList != null)
             {
-                <div class="col-10 col-sm-5 col-md-3 col-lg-2 mb-3" >
-                    <div class="card-cus card position-relative" style=" width: 10em; height: 200px;">
+                foreach (var manga in mangaList)
+                {
 
-                        <div class="card-background"
-                            @* style="  background-image: url('');"> *@
-                            style="  background-image: url(@imgUrl);">
-                        </div>
+                    var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                    <div class="col-10 col-sm-5 col-md-3 col-lg-2 mb-3">
+                        <div class="card-cus card position-relative" style=" width: 10em; height: 200px;">
 
-                        <div class="card-body position-absolute" style="bottom: 0; left: 0; z-index: 1; ">
-                            <h6 class="card-title">Card title</h6>
-                            <p class="card-text">Nội dung Card.</p>
-                            <a  href="#" class=" btn-i btn">Click Card</a>
+                            @* <div class="card-background" >
+                                style="  background-image: url('@urlImage')">
+                            </div> *@
+
+                            <img src= "@urlImage" alt="@manga.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+
+                            <div class="card-body position-absolute" style="bottom: 0; left: 0; z-index: 1; ">
+                                <h6 class="card-title">@manga.Name</h6>
+                                <p class="card-text">@manga.Slug</p>
+                                <a href="#" class=" btn-i btn">Click Card</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                
+                    <br>
+
+                }
             }
+
         </div>
     </div>
 
 
- @* <div class="col-md-1">
+    @* <div class="col-md-1">
 
     </div> *@
-    
+
 </div>

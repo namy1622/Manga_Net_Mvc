@@ -57,7 +57,12 @@ builder.Services.AddDbContext<MangaContext>(options =>{
     options.UseSqlServer(builder.Configuration.GetConnectionString("Web_Manga"));
 });
 
+//---
 builder.Services.AddRazorPages();
+
+//---
+builder.Services.AddHttpClient();
+
 
 //--- Dang Ki Lop Nhu 1 Dich Vu -------------------------------
 // builder.Services.AddSingleton<ProductService>();
@@ -212,9 +217,9 @@ app.AddStatusCodePage(); // tuy bien response khi cos loi tu 400 - 599
 app.UseEndpoints(endpoint =>{
   
 
-    endpoint.MapControllers();
+    
 
-   
+   endpoint.MapControllers();
 
     //Area
     endpoint.MapAreaControllerRoute(
@@ -222,6 +227,12 @@ app.UseEndpoints(endpoint =>{
         pattern: "/{controller=Home}/{action=Index}/{id?}",
         areaName: "Home"
     );
+
+    endpoint.MapControllerRoute(
+    name: "default_no_area",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
+
 
     // Controller ko co Area
     // endpoint.MapControllerRoute(
@@ -233,7 +244,7 @@ app.UseEndpoints(endpoint =>{
         //     id = 3
         // }
     // );
-
+    
     endpoint.MapRazorPages();
 });
 #pragma warning restore ASP0014 // Suggest using top level route registrations
