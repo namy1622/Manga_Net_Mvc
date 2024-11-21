@@ -42,6 +42,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Builder;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,7 +53,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // cau hinh chuoi ket noi den SqlServer
-builder.Services.AddDbContext<MangaContext>(options =>{
+builder.Services.AddDbContext<MangaContext>(options =>
+{
     //string connectString = builder.Configuration.GetConnectionString("AppMvcConnectionString");
     options.UseSqlServer(builder.Configuration.GetConnectionString("Web_Manga"));
 });
@@ -73,7 +75,8 @@ builder.Services.AddHttpClient();
 
 // builder.Services.AddSingleton<PlanetService>();
 //----------------------------------------------------------
-builder.Services.Configure<RazorViewEngineOptions>(options =>{
+builder.Services.Configure<RazorViewEngineOptions>(options =>
+{
     // /View/Controller/Action.cshtml
     // /MyView/Controller/Action.cshtml
 
@@ -90,8 +93,10 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>{
 //---------------------------------------------------------
 
 //-------
-builder.Services.AddAuthorization(option =>{
-    option.AddPolicy("ViewManageMenu", builder => {
+builder.Services.AddAuthorization(option =>
+{
+    option.AddPolicy("ViewManageMenu", builder =>
+    {
         builder.RequireAuthenticatedUser();
         builder.RequireClaim(RoleName.Administrator);
     });
@@ -105,30 +110,30 @@ builder.Services.AddIdentity<MangaUser, IdentityRole>()
 //---------------
 // Truy cập IdentityOptions
 builder.Services.Configure<IdentityOptions>(options =>
-{       
-        
-        // Thiết lập về Password
-        options.Password.RequireDigit = false; // Không bắt phải có số
-        options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
-        options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
-        options.Password.RequireUppercase = false; // Không bắt buộc chữ in
-        options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
-        options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt
+{
 
-        // Cấu hình Lockout - khóa user
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-        options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
-        options.Lockout.AllowedForNewUsers = true;
+    // Thiết lập về Password
+    options.Password.RequireDigit = false; // Không bắt phải có số
+    options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
+    options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
+    options.Password.RequireUppercase = false; // Không bắt buộc chữ in
+    options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
+    options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt
 
-        // Cấu hình về User.
-        options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-        options.User.RequireUniqueEmail = true;  // Email là duy nhất
+    // Cấu hình Lockout - khóa user
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
+    options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
+    options.Lockout.AllowedForNewUsers = true;
 
-        // Cấu hình đăng nhập.
-        options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
-        options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
-        options.SignIn.RequireConfirmedAccount = true;
+    // Cấu hình về User.
+    options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = true;  // Email là duy nhất
+
+    // Cấu hình đăng nhập.
+    options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
+    options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+    options.SignIn.RequireConfirmedAccount = true;
 });
 
 //-------------------------------------------------------
@@ -140,7 +145,7 @@ var mailsetting = builder.Configuration.GetSection("MailSettings");
 builder.Services.Configure<MailSettings>(mailsetting);
 builder.Services.AddSingleton<IEmailSender, SendMailService>();
 
- // Đăng ký IActionContextAccessor
+// Đăng ký IActionContextAccessor
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 // builder.Services.AddTransient<AdminSidebarService>();
 //
@@ -149,23 +154,23 @@ builder.Services.AddAuthentication()
         // theem provider từ google
         .AddGoogle(options =>
         {
-                var gconfig = builder.Configuration.GetSection("Authentication:Google");
+            var gconfig = builder.Configuration.GetSection("Authentication:Google");
 #pragma warning disable CS8601 // Possible null reference assignment.
-                options.ClientId = gconfig["ClientId"];
+            options.ClientId = gconfig["ClientId"];
 #pragma warning restore CS8601 // Possible null reference assignment.
 #pragma warning disable CS8601 // Possible null reference assignment.
-                options.ClientSecret = gconfig["ClientSecret"];
+            options.ClientSecret = gconfig["ClientSecret"];
 #pragma warning restore CS8601 // Possible null reference assignment.
-                // https://localhost:5001/signin-google
-                options.CallbackPath = "/dang-nhap-tu-google";
+            // https://localhost:5001/signin-google
+            options.CallbackPath = "/dang-nhap-tu-google";
         })
          // thêm provider từ FB
          .AddFacebook(fb_options =>
          {
-                 var fbAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
-                 fb_options.AppId = fbAuthNSection["AppId"];
-                 fb_options.AppSecret = fbAuthNSection["AppSecret"];
-                 fb_options.CallbackPath = "/dang-nhap-tu-facebook";
+             var fbAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+             fb_options.AppId = fbAuthNSection["AppId"];
+             fb_options.AppSecret = fbAuthNSection["AppSecret"];
+             fb_options.CallbackPath = "/dang-nhap-tu-facebook";
          })
 
         // .AddTwitter() // thêm provider từ TW
@@ -176,8 +181,8 @@ builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>
 //---------------
 
 var app = builder.Build();
- 
- IWebHostEnvironment envProgram;
+
+IWebHostEnvironment envProgram;
 
 
 // Configure the HTTP request pipeline.
@@ -190,15 +195,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//--------------
-//app.UseStaticFiles(new StaticFileOptions()
-//{
-//    FileProvider = new PhysicalFileProvider(
-//        Path.Combine(Directory.GetCurrentDirectory(), "Uploads")
-//       ),
-//    RequestPath = "/contents"
-//});
-
 
 //-------------
 
@@ -206,46 +202,37 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
-
 app.UseAuthentication(); // xac dinh danh tinhs 
 app.UseAuthorization(); // xac thuc quyen truy cap 
 
-app.AddStatusCodePage(); // tuy bien response khi cos loi tu 400 - 599
+// app.AddStatusCodePage(); // tuy bien response khi cos loi tu 400 - 599
 
 #pragma warning disable ASP0014 // Suggest using top level route registrations
-app.UseEndpoints(endpoint =>{
-  
+app.UseEndpoints(endpoint =>
+// {
+//     endpoint.MapControllerRoute(
+//     name: "areas",
+//     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+// );
 
-    
+{
+//     endpoint.MapAreaControllerRoute(
+//     name: "areas",
+//     areaName: "Home",
+//     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+// );
 
-   endpoint.MapControllers();
-
-    //Area
-    endpoint.MapAreaControllerRoute(
-        name: "default",
-        pattern: "/{controller=Home}/{action=Index}/{id?}",
-        areaName: "Home"
-    );
 
     endpoint.MapControllerRoute(
-    name: "default_no_area",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
-);
+        name: "default",
+        pattern: "{area=Home}/{controller=Home}/{action=Index}/{id?}");
+
+endpoint.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
-    // Controller ko co Area
-    // endpoint.MapControllerRoute(
-    //     name: "default",
-    //     pattern: "/{controller=Home}/{action=Index}/{id?}"
-        // defaults: new {
-        //     controller = "First",
-        //     action = "ViewProduct",
-        //     id = 3
-        // }
-    // );
-    
-    endpoint.MapRazorPages();
+     endpoint.MapRazorPages(); // Nếu sử dụng Razor Pages
 });
 #pragma warning restore ASP0014 // Suggest using top level route registrations
 

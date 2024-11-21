@@ -17,10 +17,10 @@ namespace Manga.Home.Models{
 
       //  public string category {set; get;}
     }
-    public class SeoOnPage{
-        [JsonPropertyName("og_image")]
-        public List<string> OgImages { get; set; }
-    }
+    // public class SeoOnPage{
+    //     [JsonPropertyName("og_image")]
+    //     public List<string> OgImages { get; set; }
+    // }
 
     // public class ApiResponse_InfoManga{
     public class Data{
@@ -30,8 +30,8 @@ namespace Manga.Home.Models{
         // [JsonPropertyName("og_image")]
         // public List<ImageMangaModels> ImageMangaList{set; get;}
 
-        [JsonPropertyName("seoOnPage")]
-        public SeoOnPage SeoOnPage { get; set; }
+        // [JsonPropertyName("seoOnPage")]
+        // public SeoOnPage SeoOnPage { get; set; }
     }
 
     public class ApiResponse_InfoManga

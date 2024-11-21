@@ -7,8 +7,9 @@ using System.Text.Json;
 namespace BTL_WebManga.Controllers;
 
 [Area("Home")]
-[ApiController]
-[Route("[controller]")]
+// [ApiController]
+// [Route("/api/[Controller]")]\
+// [Route("[area]/[controller]/[action]")]
 public class HomeController : Controller
 {
     private readonly HttpClient httpClient;
@@ -23,8 +24,9 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [Route("/api/homelogin")]
-
+    // [Route("/api/home")]
+    [HttpGet]
+   // [Route("")]
     public async Task<IActionResult> Index()
     {
 
@@ -47,7 +49,8 @@ public class HomeController : Controller
 
                 _logger.LogInformation($"Đã nhận dữ liệu từ tệp JSON: {jsonString}");
 
-                if (apiResponse?.Data.InfoMangaList != null && apiResponse?.Data.SeoOnPage != null)
+                // if (apiResponse?.Data.InfoMangaList != null && apiResponse?.Data.SeoOnPage != null)
+                if (apiResponse?.Data.InfoMangaList != null)
                 {
                     _logger.LogInformation("===== Đọc dữ liệu thành công từ tệp JSON, đang truyền vào View ====");
 
@@ -56,12 +59,12 @@ public class HomeController : Controller
                     _logger.LogInformation("===== Thành công lấy mangaList ====");
 
                     // Lấy danh sách og_image
-                    var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
+                    //var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
                     _logger.LogInformation("===== Thành công lấy seoOnPage ====");
 
                     // Truyền dữ liệu vào View
                     ViewBag.MangaList = mangaList;
-                    ViewBag.OgImages = ogImages;
+                   // ViewBag.OgImages = ogImages;
 
                     return View();
                 }
@@ -89,11 +92,13 @@ public class HomeController : Controller
 
     }
 
+    [Route("/api/privacy")]
     public IActionResult Privacy()
     {
         return View();
     }
 
+    [Route("/api/error")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
