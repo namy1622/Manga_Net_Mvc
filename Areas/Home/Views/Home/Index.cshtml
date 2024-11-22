@@ -5,10 +5,13 @@
 @{
     var imgUrl = "https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
 
-    var mangaList = ViewBag.MangaList as List<Manga.Home.Models.InfoMangaModels>;
+    @* var mangaList = ViewBag.MangaList as List<Manga.Home.Models.InfoMangaModels>; *@
+    var mangaList = ViewBag.MangasInPage as List<Manga.Home.Models.InfoMangaModels>;
+
     @* var ogImages = ViewBag.OgImages as List<Manga.Home.Models.SeoOnPage>; *@
 
 }
+
 
 
 <div class="row">
@@ -19,26 +22,84 @@
         </div>
     </div>
 
-    <div class=" col-md-10 container d-flex mt-3" style=" justify-content: center;">
-        <div class="row justify-content-center">
+    <div class=" col-md-10 container  mt-0">
+
+        @* =============================== *@
+
+        <div class="container mt-4  pe-1 ps-1 " style="height: 600px; border:none ;">
+            <!-- Tiêu đề -->
+            <div class=" mb-1 mt-2">
+                <h2 class="w-600 ">Truyện Nổi Bật</h2>
+
+            </div>
+
+            <!-- Carousel -->
+            <div id="featuredStoriesCarousel" style="border: none; border-radius: 15px;"
+                class="carousel slide  custom-border custom-shadow" data-bs-ride="carousel">
+
+                <div class="carousel-inner custom-border custom-shadow"
+                    style="height: 544px; position: relative; border-radius: 15px;">
+                    <!-- Truyện 1 -->
+                    <div class="carousel-item active">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <img src="https://image1.ddntcthcd.com/nettruyen/thumb/chuyen-sinh-vao-the-gioi-vo-lam.jpg"
+                                class="img-fluid" style="height: 900px; width: 75%; " alt="Truyện 1">
+                        </div>
+                    </div>
+
+                    <!-- Truyện 2 -->
+                    <div class="carousel-item">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <img src="https://otruyenapi.com/uploads/comics/vuong-quoc-huyet-mach-thumb.jpg"
+                                class="img-fluid" style="height: 900px; width: 75%; " alt="Truyện 2">
+                        </div>
+                    </div>
+
+                    <!-- Truyện 3 -->
+                    <div class="carousel-item">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <img src="https://otruyenapi.com/uploads/comics/van-co-toi-cuong-tong-thumb.jpg"
+                                class="img-fluid" style="height: 900px; width: 75%; " alt="Truyện 3">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Controls -->
+                <button class="btn-prev"
+                 type="button" data-bs-target="#featuredStoriesCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="btn-next" type="button" data-bs-target="#featuredStoriesCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        @* ================================ *@
+        <div class="row justify-content-center mt-5">
             @if (mangaList != null)
             {
                 foreach (var manga in mangaList)
                 {
 
                     var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
-                    <div class="col-10 col-sm-5 col-md-3 col-lg-2 mb-3">
-                        <div class="card-cus card position-relative" style=" width: 11em; height: 230px;">
+                    <div class="  col-10 col-sm-5 col-md-3 col-lg-2 mb-3">
+                        <div class="card-cus card position-relative custom-border custom-shadow"
+                            style=" width: 11em; height: 230px;">
 
                             @* <div class="card-background" >
                                 style="  background-image: url('@urlImage')">
                             </div> *@
 
-                            <img src="@urlImage" alt="@manga.Name" style="width: 100%; height: 70%; object-fit: cover;" />
-                            
+                            <img class="custom-border custom-shadow" src="@urlImage" alt="@manga.Name"
+                                style="width: 100%; height: 70%; object-fit: cover; border:none" />
+
                             <a class="card-body position-absolute"
                                 style="bottom: 0; left: 0; text-decoration:none; color: black; width: 100%; height: 60px;  padding-top: 0px; padding-left: 5px; padding-right: 5px;"
-                                 asp-area="DetailsManga" asp-controller="DetailsManga" asp-action="Index">
+                                asp-area="DetailsManga" asp-controller="DetailsManga" asp-action="Index">
                                 <p style="font-size: 14px;font-weight: 600;" class="card-title w-100 text-left">@manga.Name</p>
                                 @* <p class="card-text">@manga.Slug</p> *@
                                 @* <a href="#" class=" btn-i btn">Click Card</a> *@
@@ -51,7 +112,9 @@
             }
 
         </div>
+
     </div>
+    <partial name="_Paging" model="@ViewBag.pagingModel" />
 
 
     @* <div class="col-md-1">

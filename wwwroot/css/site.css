@@ -8,7 +8,11 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -22,12 +26,12 @@ body {
   background: #B4B4B2;
 }
 
-.nav{
+.nav {
   background: #27403E;
-  border-radius: 0px  0px  15px  15px;
+  border-radius: 0px 0px 15px 15px;
 }
 
-.name-branch{
+.name-branch {
   padding-left: 40px;
   color: #ffff;
   font-weight: bold;
@@ -35,16 +39,15 @@ body {
 
 
 
-.dropdown-it{
-  
-}
+.dropdown-it {}
 
-.border-drop{
+.border-drop {
   border-radius: 15px;
   background-color: #50827e;
-  border:#27403E solid 3px;
+  border: #27403E solid 3px;
 }
-.border-drop:hover{
+
+.border-drop:hover {
   background: #416b69;
 }
 
@@ -63,7 +66,8 @@ body {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0.5; /* Điều chỉnh độ mờ của hình nền */
+  opacity: 0.5;
+  /* Điều chỉnh độ mờ của hình nền */
   z-index: 0;
 }
 
@@ -86,4 +90,60 @@ body {
   background: #ffff;
 
 
+}
+
+
+.custom-border {
+  border: 1px solid #03182e;
+  /* Viền rộng 5px với màu xanh */
+}
+
+.custom-shadow {
+  box-shadow: 0 4px 20px rgba(8, 51, 98, 0.5);
+  /* Đổ bóng mạnh với độ mờ */
+}
+
+
+.carousel-caption {
+  background: rgba(0, 0, 0, 0.5);
+  /* Nền mờ đen */
+  /* padding: 10px; */
+  border-radius: 5px;
+}
+
+.carousel img {
+  /* max-height: 400px; Giới hạn chiều cao ảnh */
+  object-fit: fill;
+  /* Giữ tỷ lệ ảnh */
+}
+
+.btn-prev {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  width: 15%;
+  padding: 30px;
+  color: #fff;
+  background: 0 0;
+  border: 0;
+  opacity: 1;
+  transition: opacity .15s ease;
+}
+
+.btn-next {
+  position:absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+ 
+  padding: 30px;
+  color: #fff;
+  background: 0 0;
+  border: 0;
+  opacity: 1;
+  transition: opacity .15s ease;
 }

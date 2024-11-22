@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using BTL_WebManga.Models;
 using Manga.Home.Models;
 using System.Text.Json;
+using Manga.Models;
 
 namespace BTL_WebManga.Controllers;
 
@@ -26,8 +27,8 @@ public class HomeController : Controller
 
     // [Route("/api/home")]
     [HttpGet]
-   // [Route("")]
-    public async Task<IActionResult> Index()
+    // [Route("")]
+    public async Task<IActionResult> Index(int currentPage, int pagesize)
     {
 
         try
@@ -64,8 +65,44 @@ public class HomeController : Controller
 
                     // Truyền dữ liệu vào View
                     ViewBag.MangaList = mangaList;
-                   // ViewBag.OgImages = ogImages;
+                    // ViewBag.OgImages = ogImages;
 
+                    //-- Phân trang--
+                    int totalManga = mangaList.Count();
+                    _logger.LogInformation($"===== {totalManga} ====");
+
+                    if (pagesize <= 0) pagesize = 30;
+                    int countPages = (int)Math.Ceiling((double)totalManga / pagesize);
+
+                    if (currentPage > countPages) currentPage = countPages;
+                    if (currentPage < 1) currentPage = 1;
+
+                    var pagingModel = new PagingModel()
+                    {
+                        countpages = countPages,
+                        currentpage = currentPage,
+
+                        //delegate phat sinh ra url
+                        generateUrl = (pageNumber) => Url.Action("Index", new
+                        {
+                            currentPage = pageNumber,
+                            pagesize = pagesize
+                        })
+                    };
+
+                    ViewBag.pagingModel = pagingModel;
+                    ViewBag.totalManga = totalManga;
+
+                    ViewBag.postIndex = (currentPage - 1) * pagesize;
+
+                    var MangasInPage = mangaList
+                                            .Skip((currentPage - 1) * pagesize)
+                                            .Take(pagesize)
+                                            .ToList();
+                    ViewBag.MangasInPage = MangasInPage;
+                    //-- end Phân trang --/=
+                    _logger.LogInformation($"===== currentPage = {currentPage} ====");
+                    _logger.LogInformation($"===== pagesize = {pagesize} ====");
                     return View();
                 }
                 else
@@ -76,7 +113,7 @@ public class HomeController : Controller
                 }
 
             }
-             else
+            else
             {
                 _logger.LogError($"Không tìm thấy tệp JSON tại đường dẫn {jsonFilePath}");
                 ViewBag.Error = "Không tìm thấy tệp JSON.";
