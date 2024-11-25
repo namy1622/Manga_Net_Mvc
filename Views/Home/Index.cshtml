@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+    var mangaList = ViewBag.MangasInPage as List<BTL_WebManga.Models.ComicModel>;
+}
+
+    <!-- Truyện Nổi Bật -->
+    <div class="container-fluid mt-4" style="padding-left: 10rem; padding-right: 10rem;">
+        <!-- Chỉnh px-3 để có padding nhỏ 2 bên -->
+        <!-- Tiêu đề -->
+        <div class="mb-3">
+            <h2 class="fw-bold">Truyện Nổi Bật</h2>
+        </div>
+
+        <!-- Carousel -->
+        <div id="featuredStoriesCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <!-- Truyện 1 -->
+                <div class="carousel-item active">
+                    <div class="d-flex justify-content-center align-items-center bg-dark" style="height: 600px; border-radius: 15px;">
+                        <img src="https://otruyenapi.com//uploads/comics/ichi-anh-chang-phu-thuy-thumb.jpg"
+                             class="img-fluid rounded" alt="Truyện 1" style="height: -webkit-fill-available;">
+                    </div>
+                </div>
+                <!-- Truyện 2 -->
+                <div class="carousel-item">
+                    <div class="d-flex justify-content-center align-items-center bg-dark" style="height: 600px; border-radius: 15px;">
+                        <img src="https://otruyenapi.com/uploads/comics/vuong-quoc-huyet-mach-thumb.jpg"
+                             class="img-fluid rounded" alt="Truyện 2" style="height: -webkit-fill-available;">
+                    </div>
+                </div>
+                <!-- Truyện 3 -->
+                <div class="carousel-item">
+                    <div class="d-flex justify-content-center align-items-center bg-dark" style="height: 600px; border-radius: 15px;">
+                        <img src="https://otruyenapi.com/uploads/comics/van-co-toi-cuong-tong-thumb.jpg"
+                             class="img-fluid rounded" alt="Truyện 3" style="height: -webkit-fill-available;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Điều khiển -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredStoriesCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredStoriesCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <div class="container-fluid mt-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold">Danh Sách Truyện</h2>
+            </div>
+
+            <!-- Danh sách truyện -->
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+                @if (mangaList != null)
+                {
+                    foreach (var manga in mangaList)
+                    {
+                        var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                        <div class="col">
+                        <a class="card h-100 border-0 shadow-sm" asp-controller="DetailsManga" asp-action="Index" title="@manga.Name">
+                                <!-- Giảm kích thước ảnh -->
+                                <img src="@urlImage" class="card-img-top rounded" alt="@manga.Name" style="height: 100%; object-fit: cover;">
+                                <div class="card-body p-2 text-center d-flex flex-column justify-content-between">
+                                </div>
+                                <div class="card-body p-2">
+                                    <h6 class="card-title text-truncate mb-0" style="font-size: 16px; word-wrap: break-word; overflow: hidden; ">@manga.Name</h6>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <div class="mt-4">
+            <partial name="_Paging" model="@ViewBag.pagingModel" />
+        </div>
+    </div>

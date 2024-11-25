@@ -21,4 +21,8 @@
     <PackageReference Include="MySql.Data.EntityFramework" Version="9.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\" />
+  </ItemGroup>
+
 </Project>
