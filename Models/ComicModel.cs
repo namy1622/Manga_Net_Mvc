@@ -6,7 +6,7 @@ namespace BTL_WebManga.Models
     public class ComicModel
     {
         [JsonPropertyName("_id")]
-        public string Id { get; set; }
+        public string IdComic { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
@@ -16,6 +16,12 @@ namespace BTL_WebManga.Models
 
         [JsonPropertyName("thumb_url")]
         public string Thumb_url { get; set; }
+
+        [JsonPropertyName("updatedAt")]
+        public DateTime Date { get; set; }
+
+        [JsonPropertyName("category")]
+        public List<CategoryListModel> CategoryList { get; set; }
     }
 
     public class Data_Comic

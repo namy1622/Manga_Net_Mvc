@@ -5,13 +5,14 @@ namespace BTL_WebManga.Models
     public class CategoryListModel
     {
         [JsonPropertyName("_id")]
-        public string Id { get; set; }
+        public string IdCatecogy { get; set; }
 
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
+        
     }
 
     public class Data_Category
