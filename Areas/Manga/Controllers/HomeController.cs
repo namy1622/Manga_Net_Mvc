@@ -5,9 +5,9 @@ using Manga.Home.Models;
 using System.Text.Json;
 using Manga.Models;
 
-namespace BTL_WebManga.Controllers;
+namespace Areas.Manga.Controllers;
 
-[Area("Home")]
+[Area("Manga")]
 // [ApiController]
 // [Route("/api/[Controller]")]\
 // [Route("[area]/[controller]/[action]")]

@@ -15,7 +15,18 @@ namespace Manga.Home.Models{
         [JsonPropertyName("thumb_url")]
         public string Thumb_url { get; set; }
 
-      //  public string category {set; get;}
+         [JsonPropertyName("author")]
+         public string? Author {set; get;}
+
+        [JsonPropertyName("category")]
+        public  List<Category> Category {set; get;}
+    }
+
+    public class Category{
+        [JsonPropertyName("name")]
+        public string name{set; get;}
+        [JsonPropertyName("slug")]
+        public string slug_category{set; get;}
     }
     // public class SeoOnPage{
     //     [JsonPropertyName("og_image")]
