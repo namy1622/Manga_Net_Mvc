@@ -2,6 +2,7 @@ using System.Text.Json;
 using Areas.Manga.Models.ViewModels;
 using Manga.Home.Models;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 
 namespace Areas.Manga.C
 {
@@ -34,7 +35,7 @@ namespace Areas.Manga.C
             var mangaDetails = await GetMangaDetails(slug);
             viewModel.MangaDetails = mangaDetails;
 
-            var relatedMangas = GetRelatedMangas(slug);
+            var relatedMangas =await GetRelatedMangas(slug);
             viewModel.RelatedMangas = relatedMangas;
 
             if (mangaDetails != null)
@@ -47,7 +48,7 @@ namespace Areas.Manga.C
         }
 
 
-        private IEnumerable<InfoMangaModels> GetRelatedMangas(string? slug)
+        private async Task<IEnumerable<InfoMangaModels>> GetRelatedMangas(string? slug)
         {
             // show Truyen tương tự 
             try
@@ -57,7 +58,7 @@ namespace Areas.Manga.C
                 // Đọc dữ liệu từ tệp JSON
                 if (System.IO.File.Exists(jsonFilePath))
                 {
-                    var jsonString = System.IO.File.ReadAllText(jsonFilePath);
+                    var jsonString = await  System.IO.File.ReadAllTextAsync(jsonFilePath);
 
                     // Giải mã (deserialize) dữ liệu JSON
                     var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
@@ -108,7 +109,7 @@ namespace Areas.Manga.C
                     });
 
                     return apiResponse?.data_Details?.DetailsManga;
-
+                    
                 }
 
                 _logger.LogError("Không lấy được dữ liệu chi tiết manga từ API.");
