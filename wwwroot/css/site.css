@@ -167,6 +167,14 @@ body {
   border: none
 }
 
+.img-card:hover {
+  transform: scale(1.07);
+}
+
+.hover-cus:hover {
+  transform: scale(1.02);
+}
+
 .name-card
 {
   font-size: 14px;font-weight: 600;

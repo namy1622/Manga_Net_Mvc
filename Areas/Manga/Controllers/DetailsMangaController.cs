@@ -42,7 +42,7 @@ namespace Areas.Manga.C
             
         }
         //-----------------------------------------------------------------------------------------------------------        
-        [Route("/details/{slug?}")]
+        // [Route("/details/{slug?}")]
         [HttpGet]
         public async Task<ActionResult> Details(string? slug)
         {

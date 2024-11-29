@@ -11,4 +11,6 @@ namespace Areas.Manga.Models.ViewModels
 
         public IEnumerable<Category>? Categories {set; get;}
     }
+
+    
 }
