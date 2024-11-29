@@ -7,7 +7,7 @@ namespace Areas.Manga.Controllers
     public class ReadMangaController : Controller
     {
         // GET: ReadManga
-        public ActionResult Index()
+        public ActionResult Read()
         {
             return View();
         }

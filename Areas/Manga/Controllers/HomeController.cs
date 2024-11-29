@@ -25,6 +25,15 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    //
+    public IActionResult Splash()
+    {
+        return View();
+        
+    }
+
+    //
+
     // [Route("/api/home")]
     [HttpGet]
     // [Route("")]
@@ -40,7 +49,7 @@ public class HomeController : Controller
             // Đọc dữ liệu từ tệp JSON
             if (System.IO.File.Exists(jsonFilePath))
             {
-                var jsonString = System.IO.File.ReadAllText(jsonFilePath);
+                var jsonString = await System.IO.File.ReadAllTextAsync(jsonFilePath);
 
                 // Giải mã (deserialize) dữ liệu JSON
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions

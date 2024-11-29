@@ -1,32 +1,3 @@
-// var builder = WebApplication.CreateBuilder(args);
-
-// // Add services to the container.
-// builder.Services.AddControllersWithViews();
-
-// var app = builder.Build();
-
-// // Configure the HTTP request pipeline.
-// if (!app.Environment.IsDevelopment())
-// {
-//     app.UseExceptionHandler("/Home/Error");
-//     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-//     app.UseHsts();
-// }
-
-// app.UseHttpsRedirection();
-// app.UseStaticFiles();
-
-// app.UseRouting();
-
-// app.UseAuthorization();
-
-// app.MapControllerRoute(
-//     name: "default",
-//     pattern: "{area=Home}/{controller=Home}/{action=Index}/{id?}");
-
-// app.Run();
-
-
 
 using System.Net;
 using App.Data;
@@ -40,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Builder;
 
@@ -64,6 +34,9 @@ builder.Services.AddRazorPages();
 
 //---
 builder.Services.AddHttpClient();
+//--
+builder.Services.AddMemoryCache();
+builder.Services.AddHostedService<PreloadService>();
 
 
 //--- Dang Ki Lop Nhu 1 Dich Vu -------------------------------
@@ -182,7 +155,7 @@ builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>
 
 var app = builder.Build();
 
-IWebHostEnvironment envProgram;
+// IWebHostEnvironment envProgram;
 
 
 // Configure the HTTP request pipeline.
@@ -209,30 +182,22 @@ app.UseAuthorization(); // xac thuc quyen truy cap
 
 #pragma warning disable ASP0014 // Suggest using top level route registrations
 app.UseEndpoints(endpoint =>
-// {
-//     endpoint.MapControllerRoute(
-//     name: "areas",
-//     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-// );
-
 {
-//     endpoint.MapAreaControllerRoute(
-//     name: "areas",
-//     areaName: "Home",
-//     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-// );
+    // Đặt trang splash làm mặc định
+    endpoint.MapControllerRoute(
+        name: "default",
+        pattern: "{area=Manga}/{controller=Home}/{action=Splash}/{id?}");
 
+    // endpoint.MapControllerRoute(
+    //     name: "default",
+    //     pattern: "{area=Manga}/{controller=Home}/{action=Index}/{id?}");
 
     endpoint.MapControllerRoute(
         name: "default",
-        pattern: "{area=Manga}/{controller=Home}/{action=Index}/{id?}");
-
-endpoint.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
-     endpoint.MapRazorPages(); // Nếu sử dụng Razor Pages
+    endpoint.MapRazorPages(); // Nếu sử dụng Razor Pages
 });
 #pragma warning restore ASP0014 // Suggest using top level route registrations
 

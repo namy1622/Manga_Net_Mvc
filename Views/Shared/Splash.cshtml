@@ -1,0 +1,73 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+
+
+        }
+
+        .splash-container {
+           
+            text-align: center;
+        @* background: url('/Img/run.gif') no-repeat center center fixed; *@
+        }
+
+        .loading {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+    <script>
+        // Chuyển hướng sau 3 giây
+        setTimeout(function () {
+            window.location.href = "Manga/Home/Index"; // Thay đổi URL này thành trang chính của bạn
+        }, 9000);
+    </script>
+
+    @* <script>
+        setTimeout(function () {
+            const targetArea = '@ViewData["AreaName"]' ;
+            const targetController = '@ViewData["ControllerName"]';
+            const targetAction = '@ViewData["ActionName"]';
+            const targetId = '@ViewData["Id"]';
+          
+          @* const rout = '@ViewData["Rout"]'; *@
+       @*     // Kiểm tra targetId trước khi tạo URL
+            const targetUrl = targetId 
+                ? `/${targetArea}/${targetController}/${targetAction}/${targetId}`
+                 @* ? (rout != null
+                    ? `/${rout}/${targetId}`
+                    : `/${targetArea}/${targetController}/${targetAction}/${targetId}`) *@
+     @*           : `/${targetArea}/${targetController}/${targetAction}`;
+            window.location.href = targetUrl;
+        }, 3000);
+    </script> *@
+
+</head>
+
+<body>
+    <div class=" splash-container"  >
+        <img src="~/Img/run.gif" alt="" >
+
+
+    </div>
+</body>
+
+</html>
