@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Manga.Home.Models
 {
-   public class DetailsManga
+   public class DetailsMangaModel
    {
       [JsonPropertyName("_id")]
       public string Id { get; set; }
@@ -16,8 +16,8 @@ namespace Manga.Home.Models
       [JsonPropertyName("thumb_url")]
       public string Thumb_url { get; set; }
 
-      // [JsonPropertyName("author")]
-      // public string? Author { set; get; }
+        // [JsonPropertyName("author")]
+        // public string? Author { set; get; }
 
       [JsonPropertyName("category")]
       public List<Category> Category { set; get; }
@@ -50,14 +50,14 @@ namespace Manga.Home.Models
 
     public class Data_Details{
       [JsonPropertyName("item")]
-      public DetailsManga DetailsManga{set; get;}
+      public DetailsMangaModel DetailsManga{set; get;}
    }
 
 
 
    public class ApiResponse_Details{
       [JsonPropertyName("data")]
-      public Data_Details data_Details {set; get;}
+      public Data_Details DataDetails {set; get;}
    }
 
 }

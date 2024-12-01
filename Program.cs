@@ -1,18 +1,13 @@
 
 using System.Net;
 using App.Data;
-using App.ExtendMethods;
-// using App.Menu;
 using Manga.Models;
 using App.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Builder;
+using Manga.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);

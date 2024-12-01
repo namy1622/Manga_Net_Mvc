@@ -7,6 +7,6 @@ namespace Manga.Models
 {
     public class MangaUser: IdentityUser 
     {
-          
+       
     }
 }

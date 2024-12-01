@@ -1,7 +1,9 @@
 using System.Text.Json;
 using Areas.Manga.Models.ViewModels;
+using Manga.Data;
 using Manga.Home.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using NuGet.Protocol;
 
@@ -13,6 +15,7 @@ namespace Areas.Manga.C
     {
         private readonly HttpClient httpClient;
         private readonly ILogger<DetailsMangaController> _logger;
+        private readonly MangaContext _mangaContext;
 
         private readonly IMemoryCache _cache;
 
@@ -22,17 +25,18 @@ namespace Areas.Manga.C
         private readonly string jsonAPI_Details = "https://otruyenapi.com/v1/api/truyen-tranh/";
 
         // public List<Chapter> server_chap{set; get;}
-        public DetailsMangaController(HttpClient _httpClient, ILogger<DetailsMangaController> logger, IMemoryCache cache)
+        public DetailsMangaController(HttpClient _httpClient, ILogger<DetailsMangaController> logger, IMemoryCache cache, MangaContext mangaContext)
         {
             httpClient = _httpClient;
             _logger = logger;
             _cache = cache;
+            _mangaContext = mangaContext;
         }
 
 
         public IActionResult Splash(string slug)
         {
-             ViewData["AreaName"] = "Manga";      
+            ViewData["AreaName"] = "Manga";      
             ViewData["ControllerName"] = "DetailsManga"; // Controller
             ViewData["ActionName"] = "Details"; // Action
 
@@ -77,6 +81,13 @@ namespace Areas.Manga.C
                 viewModel.Categories = mangaDetails.Category;
             }
 
+            var username = User.Identity.Name;
+            var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
+            if (user != null && viewModel.MangaDetails != null)
+            {
+                viewModel.IsFavourite = await _mangaContext.UserFavouriteComic
+                    .AnyAsync(f => f.UserID == user.Id && f.IdManga == viewModel.MangaDetails.Id);
+            }
 
 
             return View(viewModel);
@@ -124,19 +135,117 @@ namespace Areas.Manga.C
                     return null;
                 }
             }
-            // catch (Exception ex)
-            // {
-            //     _logger.LogError($"Lỗi khi gọi API: {ex.Message}");
-            // }
-            // return new List<InfoMangaModels>();
+        // catch (Exception ex)
+        // {
+        //     _logger.LogError($"Lỗi khi gọi API: {ex.Message}");
+        // }
+        // return new List<InfoMangaModels>();
 
         // }
 
-        public async Task<DetailsManga> GetMangaDetails(string? slug)
+        [HttpPost]
+        public async Task<IActionResult> Favourite(string comicId)
+        {
+            var username = User.Identity.Name;
+            var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+                return NotFound("Người dùng không tồn tại.");
+
+            // Đọc dữ liệu từ file JSON
+            if (!System.IO.File.Exists(jsonFilePath))
+                return NotFound("Không tìm thấy tệp dữ liệu JSON.");
+
+            var jsonString = await System.IO.File.ReadAllTextAsync(jsonFilePath);
+
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            var mangaList = apiResponse?.Data.InfoMangaList;
+
+            if (mangaList == null)
+                return NotFound("Không tìm thấy danh sách manga trong tệp JSON.");
+
+            var manga = mangaList.FirstOrDefault(m => m.Id == comicId);
+
+            if (manga == null)
+                return NotFound("Không tìm thấy manga với ComicId được cung cấp.");
+
+
+            // Kiểm tra xem đã theo dõi hay chưa
+            var existingFavourite = await _mangaContext.UserFavouriteComic
+                .FirstOrDefaultAsync(f => f.UserID == user.Id && f.IdManga == comicId);
+
+            if (existingFavourite != null)
+                return BadRequest("Manga này đã được theo dõi.");
+
+
+            // Thêm vào danh sách yêu thích
+            var favouriteComic = new FavouriteComicModel
+            {
+                UserID = user.Id,
+                IdManga = comicId,
+                FollowedDate = DateTime.Now
+            };
+
+            _mangaContext.UserFavouriteComic.Add(favouriteComic);
+            await _mangaContext.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { slug = manga.Slug });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UnFavourite(string ComicId)
+        {
+            var username = User.Identity.Name;
+            var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+                return NotFound("Người dùng không tồn tại.");
+
+            // Đọc dữ liệu từ file JSON
+            if (!System.IO.File.Exists(jsonFilePath))
+                return NotFound("Không tìm thấy tệp dữ liệu JSON.");
+
+            var jsonString = await System.IO.File.ReadAllTextAsync(jsonFilePath);
+
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            var mangaList = apiResponse?.Data.InfoMangaList;
+
+            if (mangaList == null)
+                return NotFound("Không tìm thấy danh sách manga trong tệp JSON.");
+
+            // Tìm manga theo SlugManga
+            var manga = mangaList.FirstOrDefault(m => m.Id == ComicId);
+
+            if (manga == null)
+                return NotFound("Không tìm thấy manga với ComicId được cung cấp.");
+
+            // Kiểm tra xem manga đã được theo dõi chưa
+            var existingFavourite = await _mangaContext.UserFavouriteComic
+                .FirstOrDefaultAsync(f => f.UserID == user.Id && f.IdManga == ComicId);
+
+            if (existingFavourite == null)
+                return BadRequest("Manga này chưa được theo dõi.");
+
+            // Xóa khỏi danh sách yêu thích
+            _mangaContext.UserFavouriteComic.Remove(existingFavourite);
+            await _mangaContext.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { slug = manga.Slug });
+        }
+
+        public async Task<DetailsMangaModel> GetMangaDetails(string? slug)
         {
             var cacheKey = $"MangaDetails_{slug}";
 
-            if (_cache.TryGetValue(cacheKey, out DetailsManga cachedManga))
+            if (_cache.TryGetValue(cacheKey, out DetailsMangaModel cachedManga))
             {
                 _logger.LogInformation("Returning cached MangaDetails.");
                 return cachedManga;
@@ -163,7 +272,7 @@ namespace Areas.Manga.C
 
                     // return apiResponse?.data_Details?.DetailsManga;
 
-                    var mangaDetails = apiResponse?.data_Details?.DetailsManga;
+                    var mangaDetails = apiResponse?.DataDetails?.DetailsManga;
 
                     // Cache the manga details for future requests
                     if (mangaDetails != null)

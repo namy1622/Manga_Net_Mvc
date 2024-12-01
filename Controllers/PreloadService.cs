@@ -29,9 +29,9 @@ public class PreloadService : BackgroundService{
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse_Details>(jsonString);
 
-                if (apiResponse?.data_Details?.DetailsManga != null)
+                if (apiResponse?.DataDetails?.DetailsManga != null)
                 {
-                    _cache.Set("PreloadedMangaList", apiResponse.data_Details.DetailsManga, TimeSpan.FromMinutes(30));
+                    _cache.Set("PreloadedMangaList", apiResponse.DataDetails.DetailsManga, TimeSpan.FromMinutes(30));
                     _logger.LogInformation("Preloaded data successfully.");
                 }
             }

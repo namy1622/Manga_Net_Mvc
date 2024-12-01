@@ -23,6 +23,8 @@ namespace Manga.Home.Models{
     }
 
     public class Category{
+        [JsonPropertyName("id")]
+        public string Id { set; get; }
         [JsonPropertyName("name")]
         public string name{set; get;}
         [JsonPropertyName("slug")]

@@ -1,16 +1,21 @@
 // using Manga.Models.Post;
+using Manga.Home.Models;
+using Manga.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
-namespace Manga.Models 
+namespace Manga.Data
 {
     // Manga.Models.MangaContext
     public class MangaContext : IdentityDbContext<MangaUser>
     {
         public MangaContext(DbContextOptions<MangaContext> options) : base(options)
         {
-          
+
         }
+        public DbSet<FavouriteComicModel> UserFavouriteComic { get; set; } = default!;
+        //public DbSet<ReadHistoryModel> ReadHistoryModel { get; set; } = default!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -21,7 +26,7 @@ namespace Manga.Models
         {
             base.OnModelCreating(modelBuilder);
 
-             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 var tableName = entityType.GetTableName();
                 if (tableName.StartsWith("AspNet"))
@@ -29,7 +34,9 @@ namespace Manga.Models
                     entityType.SetTableName(tableName.Substring(6));
                 }
             }
-        } 
+        }
+
+
 
     }
 }

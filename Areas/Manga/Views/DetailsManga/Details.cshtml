@@ -55,12 +55,24 @@
                             }
                         </div>
                         <p class="card-text info-box font-cus">Cập nhật: ...</p>
-
-                        <div class="d-flex  font-cus">
-                            <p class="pt-2">Thêm yêu thích</p>
-                            <button type="button" class="ms-2 bg-white" style="border: none;">
-                                <img src="~/Icon/unlike.png" alt="" style="height: 32px; width:32px">
-                            </button>
+                        <div class="d-flex font-cus">
+                            <form id="favouriteForm" method="post">
+                                @if (Model.IsFavourite)
+                                {
+                                    <!-- Nút Hủy theo dõi -->
+                                    <button type="submit" class="btn btn-danger" asp-action="UnFavourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" onclick="toggleFavourite()">
+                                        Hủy yêu thích
+                                    </button>
+                                }
+                                else
+                                {
+                                    <!-- Nút Theo dõi -->
+                                    <button type="submit" class="btn btn-success" asp-action="Favourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" onclick="toggleFavourite()">
+                                        Yêu thích
+                                    </button>
+                                }
+                            </form>
+                             
                         </div>
                         <div class="d-flex btn-group w-50 mt-0"
                             style="height: 2.4em; align-items: flex-end; margin-bottom: 10px;">
@@ -184,7 +196,38 @@
 
 
 
-
+<script>
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData.toString()
+    })
+        .then(response => {
+            if (response.ok) {
+                const button = event.target;
+                if (action === "Favourite") {
+                    button.innerText = "Hủy yêu thích";
+                    button.classList.remove("btn-success");
+                    button.classList.add("btn-danger");
+                } else {
+                    button.innerText = "Yêu thích";
+                    button.classList.remove("btn-danger");
+                    button.classList.add("btn-success");
+                }
+            } else {
+                response.text().then(text => {
+                    console.log("Lỗi server:", text);
+                    alert("Lỗi: " + text);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi khi gửi yêu cầu:", error);
+            alert("Đã xảy ra lỗi, vui lòng thử lại.");
+        });
+</script>
 
 
 
@@ -212,9 +255,6 @@
         font-weight: 600;
     }
 </style>
-
-
-
 
 
 

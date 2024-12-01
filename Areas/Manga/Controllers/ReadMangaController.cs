@@ -6,7 +6,6 @@ using Microsoft.Extensions.Caching.Memory;
 namespace Areas.Manga.Controllers
 {
      [Area("Manga")]
-    [Route("/readmanga/[action]")]
     public class ReadMangaController : Controller
     {
          private readonly HttpClient httpClient;
