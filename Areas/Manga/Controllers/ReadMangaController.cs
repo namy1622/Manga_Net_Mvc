@@ -1,6 +1,9 @@
 using System.Text.Json;
 using Areas.Manga.Models.ViewModels;
+using Manga.Data;
+using Manga.Home.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Areas.Manga.Controllers
@@ -11,6 +14,9 @@ namespace Areas.Manga.Controllers
          private readonly HttpClient httpClient;
         private readonly ILogger<ReadMangaController> _logger;
 
+        private readonly MangaContext _mangaContext;
+
+
         private readonly IMemoryCache _cache;  
 
         // private readonly string api_Home = "https://otruyenapi.com/v1/api/home";
@@ -19,17 +25,18 @@ namespace Areas.Manga.Controllers
         private readonly string jsonAPI_Details = "https://otruyenapi.com/v1/api/truyen-tranh/";
 
         // public List<Chapter> server_chap{set; get;}
-        public ReadMangaController(HttpClient _httpClient, ILogger<ReadMangaController> logger, IMemoryCache cache)
+        public ReadMangaController(HttpClient _httpClient, ILogger<ReadMangaController> logger, IMemoryCache cache, MangaContext mangaContext)
         {
             httpClient = _httpClient;
             _logger = logger;
             _cache = cache;
+            _mangaContext = mangaContext;
         }
 
         // GET: ReadManga
         [HttpGet]
         // [Route("/read/{linkchap?}")]
-        public async Task<ActionResult> Read(string linkchap)
+        public async Task<ActionResult> Read(string linkchap, string comicId, string chapterName)
         {
             var viewModel_Read = new ReadManga_ViewModel();
 
@@ -45,10 +52,40 @@ namespace Areas.Manga.Controllers
             viewModel_Read.data_Read = readManga;
             viewModel_Read.Chapter_path = path;
             viewModel_Read.chapter_Images = imageChap;
+            var userName = User.Identity.Name;
+
+            // Thêm và cập nhật danh sách lịch sử đọc truyện
+            var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+
+            if (user == null)
+                return NotFound();
+
+            var history = await _mangaContext.ReadingHistory
+                                        .FirstOrDefaultAsync(r => r.UserID == user.Id && r.IdManga == comicId);
+
+            if (history == null)
+            {
+                history = new ReadingHistoryModel
+                {
+                    UserID = user.Id,
+                    IdManga = comicId,
+                    NameChapter = chapterName,
+                    LastReadTime = DateTime.Now
+                };
+                _mangaContext.ReadingHistory.Add(history);
+            }
+            else
+            {
+                history.NameChapter = chapterName;
+                history.LastReadTime = DateTime.Now;
+                _mangaContext.ReadingHistory.Update(history);
+            }
+            viewModel_Read.CurrentChapter = history.NameChapter;
+
+
+            await _mangaContext.SaveChangesAsync();
             return View(viewModel_Read);
         }
-
-
 
         public async Task<Read_Items> GetImagePageManga(string linkchap)
         {
@@ -80,6 +117,7 @@ namespace Areas.Manga.Controllers
                }
              
         }
+
 
     }
 }

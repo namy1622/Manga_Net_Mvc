@@ -15,7 +15,7 @@ namespace Manga.Data
 
         }
         public DbSet<FavouriteComicModel> UserFavouriteComic { get; set; } = default!;
-        //public DbSet<ReadHistoryModel> ReadHistoryModel { get; set; } = default!;
+        public DbSet<ReadingHistoryModel> ReadingHistory { get; set; } = default!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {

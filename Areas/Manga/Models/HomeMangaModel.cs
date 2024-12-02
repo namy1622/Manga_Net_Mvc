@@ -15,7 +15,7 @@ namespace Manga.Home.Models{
         [JsonPropertyName("thumb_url")]
         public string Thumb_url { get; set; }
 
-         [JsonPropertyName("author")]
+        [JsonPropertyName("author")]
          public string? Author {set; get;}
 
         [JsonPropertyName("category")]
@@ -38,7 +38,7 @@ namespace Manga.Home.Models{
     // public class ApiResponse_InfoManga{
     public class Data{
         [JsonPropertyName("items")]
-        public List<InfoMangaModels> InfoMangaList {set; get;}
+        public List<InfoMangaModels> InfoMangaList {set; get;} 
 
         // [JsonPropertyName("og_image")]
         // public List<ImageMangaModels> ImageMangaList{set; get;}

@@ -59,14 +59,12 @@
                             <form id="favouriteForm" method="post">
                                 @if (Model.IsFavourite)
                                 {
-                                    <!-- Nút Hủy theo dõi -->
                                     <button type="submit" class="btn btn-danger" asp-action="UnFavourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" onclick="toggleFavourite()">
                                         Hủy yêu thích
                                     </button>
                                 }
                                 else
                                 {
-                                    <!-- Nút Theo dõi -->
                                     <button type="submit" class="btn btn-success" asp-action="Favourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" onclick="toggleFavourite()">
                                         Yêu thích
                                     </button>
@@ -105,9 +103,9 @@
                     @foreach (var number in Model.ChapterData)
                     {
                         <a class="number-item"
-                           asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@number.link_chap"
-                        >
-                       
+                            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+                           asp-route-linkchap="@number.link_chap" asp-route-comicId="@Model.MangaDetails.Id" 
+                           asp-route-chapterName="@number.num_Chapter">
                             @number.num_Chapter
                         </a>
                     }

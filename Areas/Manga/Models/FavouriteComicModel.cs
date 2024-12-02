@@ -10,7 +10,5 @@ namespace Manga.Home.Models
         public string IdManga { get; set; }
 
         public DateTime FollowedDate { get; set; }
-
-
     }
 }

@@ -19,7 +19,7 @@ namespace Manga.Home.Models
         // [JsonPropertyName("author")]
         // public string? Author { set; get; }
 
-      [JsonPropertyName("category")]
+        [JsonPropertyName("category")]
       public List<Category> Category { set; get; }
 
       [JsonPropertyName("chapters")]

@@ -173,15 +173,6 @@ namespace Areas.Manga.C
             if (manga == null)
                 return NotFound("Không tìm thấy manga với ComicId được cung cấp.");
 
-
-            // Kiểm tra xem đã theo dõi hay chưa
-            var existingFavourite = await _mangaContext.UserFavouriteComic
-                .FirstOrDefaultAsync(f => f.UserID == user.Id && f.IdManga == comicId);
-
-            if (existingFavourite != null)
-                return BadRequest("Manga này đã được theo dõi.");
-
-
             // Thêm vào danh sách yêu thích
             var favouriteComic = new FavouriteComicModel
             {
@@ -221,25 +212,20 @@ namespace Areas.Manga.C
             if (mangaList == null)
                 return NotFound("Không tìm thấy danh sách manga trong tệp JSON.");
 
-            // Tìm manga theo SlugManga
             var manga = mangaList.FirstOrDefault(m => m.Id == ComicId);
 
             if (manga == null)
                 return NotFound("Không tìm thấy manga với ComicId được cung cấp.");
 
-            // Kiểm tra xem manga đã được theo dõi chưa
             var existingFavourite = await _mangaContext.UserFavouriteComic
                 .FirstOrDefaultAsync(f => f.UserID == user.Id && f.IdManga == ComicId);
-
-            if (existingFavourite == null)
-                return BadRequest("Manga này chưa được theo dõi.");
 
             // Xóa khỏi danh sách yêu thích
             _mangaContext.UserFavouriteComic.Remove(existingFavourite);
             await _mangaContext.SaveChangesAsync();
 
             return RedirectToAction("Details", new { slug = manga.Slug });
-        }
+        }   
 
         public async Task<DetailsMangaModel> GetMangaDetails(string? slug)
         {
