@@ -26,9 +26,8 @@ namespace Areas.Manga.Controllers
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
             if (user == null)
-                return Ok("Bạn phải đăng nhập mới dùng được chức năng này");
+                return Ok("Bạn phải đăng nhập mới dùng được chức năng này"); 
 
-            // Lấy danh sách theo dõi từ database theo UserID
             var favouriteComics = await _mangaContext.UserFavouriteComic
                 .Where(f => f.UserID == user.Id)
                 .ToListAsync();

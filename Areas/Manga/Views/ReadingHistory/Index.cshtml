@@ -1,43 +1,53 @@
 ﻿@model IEnumerable<Manga.Home.Models.InfoMangaModels>
 
+<div class="container mt-4 pe-1 ps-1">
+    <h2 class="w-600">Lịch sử đọc truyện</h2>
+    <div class="row mt-5 justify-content-start">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var manga in Model)
+            {
+                var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-3">
+                    <div class="card custom-border custom-shadow hover-cus"
+                         style="width: 100%; position: relative;">
 
-<div class="row">
-    <div class="col-md-10 container mt-0">
-        <div class="container mt-4 pe-1 ps-1" style="height: 600px; border:none;">
-            <div class="mb-1 mt-2">
-                <h2 class="w-600">Lịch sử đọc truyện</h2>
-            </div>
-            <div class="row justify-content-center mt-5">
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var manga in Model)
-                    {
-                        var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
-                        <div class="col-10 col-sm-5 col-md-3 col-lg-2 mb-3">
-                            <div class="card-cus card position-relative custom-border custom-shadow hover-cus"
-                                 style="width: 11em; height: 230px;">
-
-                                <img class="css-card img-card custom-border custom-shadow" src="@urlImage" alt="@manga.Name" />
-                                <a class="card-manga card-body position-absolute"
-                                   asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-id="@manga.Slug">
-                                    <p class="name-card card-title w-100 text-left">@manga.Name</p>
-                                </a>
-
-                                <a class="card-manga card-body position-absolute pt-4"
-                                    asp-area="Manga" asp-controller="" asp-action="" asp-route-id="">
-                                    <p class="name-card card-title w-100 text-left">Đang đọc:</p>
-                                </a>
-                                    
-                            </div>
+                        <!-- Ảnh của Manga -->
+                        <div class="overflow-hidden" style="height: 160px;">
+                            <img class="card-img-top img-fluid"
+                                 src="@urlImage" alt="@manga.Name"
+                                 style="object-fit: cover; height: 100%; width: 100%;" />
                         </div>
-                        <br>
-                    }
-                }
-                else
-                {
-                    <h3>Hiện tại bạn chưa đọc truyện nào cả</h3>
-                }
-            </div>
-        </div>
+
+                        <!-- Phần thông tin bên dưới ảnh -->
+                        <div class="card-body p-2">
+                            <!-- Hàng 1: Tên truyện -->
+                            <a class="card-title text-truncate d-block"
+                               asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-id="@manga.Slug"
+                               style="font-weight: bold;">
+                                @manga.Name
+                            </a>
+
+                            <!-- Hàng 2: Chapter đang đọc -->
+                            <p class="chapter-card text-muted" style="font-size: 0.85rem; margin-top: 5px;">
+                                Đang đọc: @manga.CurrentChapter
+                            </p>
+                        </div>
+
+                        <!-- Nút Xóa -->
+                        <form asp-area="Manga" asp-controller="ReadingHistory" asp-action="DeleteHistory" method="post" style="position: absolute; top: 5px; right: 5px;">
+                            <input type="hidden" name="mangaId" value="@manga.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Xóa
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h3>Hiện tại bạn chưa đọc truyện nào cả</h3>
+        }
     </div>
 </div>

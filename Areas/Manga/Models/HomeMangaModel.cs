@@ -12,6 +12,8 @@ namespace Manga.Home.Models{
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
 
+        public string CurrentChapter { get; set; }
+
         [JsonPropertyName("thumb_url")]
         public string Thumb_url { get; set; }
 

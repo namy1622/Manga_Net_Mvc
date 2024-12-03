@@ -13,7 +13,6 @@ namespace Areas.Manga.Models.ViewModels
 
         public string Chapter_path {set; get;}
 
-        public string CurrentChapter { get; set; }
 
     }
 }    

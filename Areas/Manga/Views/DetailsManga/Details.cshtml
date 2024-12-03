@@ -75,11 +75,13 @@
                         <div class="d-flex btn-group w-50 mt-0"
                             style="height: 2.4em; align-items: flex-end; margin-bottom: 10px;">
                             <a type="button" class="btn-info btn text-dark w-20 font-cus" style="font-size: 14px;" asp-area="Manga"
-                                asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.FirstOrDefault().link_chap">
+                               asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.FirstOrDefault().link_chap" asp-route-comicId="@Model.MangaDetails.Id"
+                               asp-route-chapterName="@Model.ChapterData.FirstOrDefault().num_Chapter">
                                 Đọc từ đầu 
                             </a>
                             <a type="button" class="btn btn-success text-dark w-20 font-cus" style="font-size: 14px;"
-                                asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.LastOrDefault().link_chap">
+                               asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.LastOrDefault().link_chap" asp-route-comicId="@Model.MangaDetails.Id"
+                               asp-route-chapterName="@Model.ChapterData.LastOrDefault().num_Chapter">
                                 Chap mới nhất
                             </a>
                         </div>
@@ -103,7 +105,7 @@
                     @foreach (var number in Model.ChapterData)
                     {
                         <a class="number-item"
-                            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+                           asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
                            asp-route-linkchap="@number.link_chap" asp-route-comicId="@Model.MangaDetails.Id" 
                            asp-route-chapterName="@number.num_Chapter">
                             @number.num_Chapter

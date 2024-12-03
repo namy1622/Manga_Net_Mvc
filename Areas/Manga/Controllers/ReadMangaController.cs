@@ -80,7 +80,6 @@ namespace Areas.Manga.Controllers
                 history.LastReadTime = DateTime.Now;
                 _mangaContext.ReadingHistory.Update(history);
             }
-            viewModel_Read.CurrentChapter = history.NameChapter;
 
 
             await _mangaContext.SaveChangesAsync();
