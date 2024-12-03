@@ -1,3 +1,4 @@
+using System.Drawing.Drawing2D;
 using System.Text.Json;
 using Areas.Manga.Models.ViewModels;
 using Manga.Data;
@@ -52,37 +53,65 @@ namespace Areas.Manga.Controllers
             viewModel_Read.data_Read = readManga;
             viewModel_Read.Chapter_path = path;
             viewModel_Read.chapter_Images = imageChap;
+
             var userName = User.Identity.Name;
+            var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+
 
             // Thêm và cập nhật danh sách lịch sử đọc truyện
+            if (user != null)
+            {
+                var history = await _mangaContext.ReadingHistory
+                                        .FirstOrDefaultAsync(r => r.UserID == user.Id && r.IdManga == comicId);
+
+                if (history == null)
+                {
+                    history = new ReadingHistoryModel
+                    {
+                        UserID = user.Id,
+                        IdManga = comicId,
+                        NameChapter = chapterName,
+                        LinkChapter = linkchap,
+                        LastReadTime = DateTime.Now
+                    };
+                    _mangaContext.ReadingHistory.Add(history);
+                }
+                else
+                {
+                    history.NameChapter = chapterName;
+                    history.LinkChapter = linkchap;
+                    history.LastReadTime = DateTime.Now;
+                    _mangaContext.ReadingHistory.Update(history);
+                }
+                await _mangaContext.SaveChangesAsync();
+            }
+  
+                return View(viewModel_Read);
+        }
+
+        //Get
+        public async Task<IActionResult> ResumeReading(string mangaId)
+        {
+            var viewModel_Read = new ReadManga_ViewModel();
+
+            var userName = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
             if (user == null)
-                return NotFound();
+                return Ok("Bạn phải đăng nhập mới dùng được chức năng này");
 
-            var history = await _mangaContext.ReadingHistory
-                                        .FirstOrDefaultAsync(r => r.UserID == user.Id && r.IdManga == comicId);
+            var mangaHistory = await _mangaContext.ReadingHistory
+                .FirstOrDefaultAsync(m => m.UserID == user.Id && m.IdManga == mangaId);
 
-            if (history == null)
-            {
-                history = new ReadingHistoryModel
-                {
-                    UserID = user.Id,
-                    IdManga = comicId,
-                    NameChapter = chapterName,
-                    LastReadTime = DateTime.Now
-                };
-                _mangaContext.ReadingHistory.Add(history);
-            }
-            else
-            {
-                history.NameChapter = chapterName;
-                history.LastReadTime = DateTime.Now;
-                _mangaContext.ReadingHistory.Update(history);
-            }
+            var readManga = await GetImagePageManga(mangaHistory.LinkChapter);
 
+            var imageChap = readManga.Chapter_Image;
 
-            await _mangaContext.SaveChangesAsync();
+            var path = readManga.Chapter_Path;
+
+            viewModel_Read.data_Read = readManga;
+            viewModel_Read.Chapter_path = path;
+            viewModel_Read.chapter_Images = imageChap;
             return View(viewModel_Read);
         }
 
@@ -116,7 +145,5 @@ namespace Areas.Manga.Controllers
                }
              
         }
-
-
     }
 }

@@ -1,0 +1,78 @@
+﻿@* <h1>Day la trang doc</h1> *@
+
+@model Areas.Manga.Models.ViewModels.ReadManga_ViewModel;
+
+@{
+    var baseImage = "https://sv1.otruyencdn.com/";
+    @* var chapter_path = $"{@Model.data_Read.Chapter_Path}" + "/"; *@
+    var chapter_path = Model?.Chapter_path != null ? $"{Model.Chapter_path}/" : "default-path/";
+}
+<div class="row">
+
+    <div class="col-md-2 h100 bg-warning">LEFT</div>
+
+    <div class="container d-flex flex-column align-items-center py-4 col-md-8 ">
+        @if (Model?.chapter_Images != null && Model.chapter_Images.Any())
+        {
+            @foreach (var page in Model.chapter_Images)
+            {
+                var url_page = baseImage + chapter_path + page.Image_File;
+
+                <div class="page-wrapper image-read-cus">
+                    <img class="img-fluid shadow rounded image-cover " src="@url_page" alt="Ảnh không tải được">
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Không có hình ảnh để hiển thị.</p>
+        }
+    </div>
+
+    <div class="col-md-2 h100 bg-primary">RIGHT</div>
+
+
+</div>
+
+<style>
+    /* CSS cho phần ảnh */
+    .page-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* Đảm bảo ảnh luôn nằm giữa */
+        max-width: 800px; /* Giới hạn chiều rộng ảnh */
+        margin: auto;
+        overflow: hidden; /* Ẩn phần dư nếu ảnh vượt khung */
+    @* aspect-ratio: 16 / 9; /* Thiết lập tỷ lệ ảnh (16:9 hoặc 4:3, tuỳ chỉnh) */ *@ border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .page-wrapper img {
+            max-width: 100%; /* Ảnh không vượt quá khung chứa */
+            height: auto; /* Giữ tỉ lệ gốc */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px; /* Bo góc cho ảnh */
+        }
+
+    /* Ảnh có hiệu ứng cover */
+    .image-cover {
+        border-left: 3px solid rgb(0, 0, 0);
+        border-right: 3px solid rgb(0, 0, 0);
+        width: 100%; /* Đảm bảo ảnh phủ toàn khung */
+        height: 100%; /* Phủ toàn chiều cao khung */
+        object-fit: fill; /* Tương tự background-size: cover */
+        object-position: center; /* Đặt trung tâm ảnh */
+        transition: transform 0.3s ease-in-out; /* Hiệu ứng khi hover */
+    }
+
+    .image-read-cus {
+        box-shadow: 10px 0px 20px 0 rgba(0, 0, 0, 0.8), /* Bóng lệch phải */
+        -10px 0px 20px 0 rgba(0, 0, 0, 0.8); /* Bóng lệch trái */
+    }
+
+
+    /* Hiệu ứng phóng to nhẹ khi hover */
+
+
+</style>

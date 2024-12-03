@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BTL_WebManga.Migrations
 {
     [DbContext(typeof(MangaContext))]
-    [Migration("20241202105115_InitialReadingHistory")]
+    [Migration("20241203135127_InitialReadingHistory")]
     partial class InitialReadingHistory
     {
         /// <inheritdoc />
@@ -63,6 +63,10 @@ namespace BTL_WebManga.Migrations
 
                     b.Property<DateTime>("LastReadTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("LinkChapter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NameChapter")
                         .IsRequired()
