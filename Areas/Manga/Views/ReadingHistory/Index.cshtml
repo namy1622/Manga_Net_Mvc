@@ -21,20 +21,17 @@
 
                         <!-- Phần thông tin bên dưới ảnh -->
                         <div class="card-body p-2">
-                            <!-- Hàng 1: Tên truyện -->
                             <a class="card-title text-truncate d-block"
                                asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-slug="@manga.Slug"
                                style="font-weight: bold;">
                                 @manga.Name
                             </a>
 
-                            <!-- Hàng 2: Chapter đang đọc -->
                             <a class="chapter-card text-muted" style="font-size: 0.85rem; margin-top: 5px;" asp-area="Manga" asp-controller="ReadManga" asp-action="ResumeReading" asp-route-mangaId="@manga.Id">
                                 Đang đọc: @manga.CurrentChapter
                             </a>
                         </div>
 
-                        <!-- Nút Xóa -->
                         <form asp-area="Manga" asp-controller="ReadingHistory" asp-action="DeleteHistory" method="post" style="position: absolute; top: 5px; right: 5px;">
                             <input type="hidden" name="mangaId" value="@manga.Id" />
                             <button type="submit" class="btn btn-danger btn-sm">
