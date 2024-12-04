@@ -73,8 +73,15 @@ namespace Areas.Manga.Controllers
             var mangaDetails = await mangaDetailsTask;
             var relatedMangas = await relatedMangasTask;
 
-    // Lưu toàn bộ ChapterData vào TempData
-    TempData["ChapterData"] = Newtonsoft.Json.JsonConvert.SerializeObject(mangaDetails.Chapters.FirstOrDefault()?.ChapterData);
+        // Lưu toàn bộ ChapterData vào TempData
+        // TempData["ChapterData"] = Newtonsoft.Json.JsonConvert.SerializeObject(mangaDetails.Chapters.FirstOrDefault()?.ChapterData);
+
+
+        // TempData["id_Manga"] = mangaDetails.Id;
+
+        // Lưu ChapterData vào Session
+HttpContext.Session.SetString("ChapterData", Newtonsoft.Json.JsonConvert.SerializeObject(mangaDetails.Chapters.FirstOrDefault()?.ChapterData));
+HttpContext.Session.SetString("id_Manga", mangaDetails.Id);
 
 
             var filter_related = relatedMangas.Where(p => p.Category.Any(c => c.slug_category == "fantasy")).ToList();

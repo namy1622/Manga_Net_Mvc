@@ -24,6 +24,14 @@ builder.Services.AddDbContext<MangaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Web_Manga"));
 });
 
+builder.Services.AddDistributedMemoryCache(); // Thêm bộ nhớ cache phân phối (Distributed Cache)
+    builder.Services.AddSession(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+        options.IdleTimeout = TimeSpan.FromMinutes(30); // Đặt thời gian hết hạn của session
+    });
+
 //---
 builder.Services.AddRazorPages();
 
@@ -163,6 +171,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseSession(); // Đảm bảo gọi UseSession trước các middleware khác
 
 //-------------
 

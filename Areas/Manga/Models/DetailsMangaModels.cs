@@ -46,7 +46,11 @@ namespace Manga.Home.Models
       [JsonPropertyName("chapter_api_data")]
       public string link_chap { get; set; }
 
-   }
+        internal object Where(bool v)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public class Data_Details{
       [JsonPropertyName("item")]

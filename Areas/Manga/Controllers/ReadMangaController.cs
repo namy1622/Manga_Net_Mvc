@@ -6,20 +6,21 @@ using Manga.Home.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using NuGet.Protocol;
 
 
 namespace Areas.Manga.Controllers
 {
-     [Area("Manga")]
+    [Area("Manga")]
     public class ReadMangaController : Controller
     {
-         private readonly HttpClient httpClient;
+        private readonly HttpClient httpClient;
         private readonly ILogger<ReadMangaController> _logger;
 
         private readonly MangaContext _mangaContext;
 
 
-        private readonly IMemoryCache _cache;  
+        private readonly IMemoryCache _cache;
 
         // private readonly string api_Home = "https://otruyenapi.com/v1/api/home";
         private readonly string baseAPI_read = "https://sv1.otruyencdn.com/";
@@ -38,19 +39,44 @@ namespace Areas.Manga.Controllers
         // GET: ReadManga
         [HttpGet]
         // [Route("/read/{linkchap?}")]
-        public async Task<ActionResult> Read(string linkchap, string comicId, string chapterName)
+        public async Task<ActionResult> Read(string linkchap,  string comicId, string chapterName)
         {
             var viewModel_Read = new ReadManga_ViewModel();
-    
- // Lấy dữ liệu ChapterData từ TempData
-    var chapterDataJson = TempData["ChapterData"] as string;
-    
-    if (!string.IsNullOrEmpty(chapterDataJson))
-    {
-        var chapterData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ChapterData>>(chapterDataJson);
-         // Gán dữ liệu ChapterData vào ViewModel
-        viewModel_Read.ChapterData = chapterData;
-    }
+
+            // Lấy dữ liệu ChapterData từ TempData
+            // var chapterDataJson = TempData.Peek("ChapterData") as string;
+            // var id_manga = TempData.Peek("id_Manga") as string;
+            // Lấy dữ liệu ChapterData từ Session
+var chapterDataJson = HttpContext.Session.GetString("ChapterData");
+var id_manga = HttpContext.Session.GetString("id_Manga");
+
+            if (!string.IsNullOrEmpty(chapterDataJson))
+            {
+                var chapterData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ChapterData>>(chapterDataJson);
+                // Gán dữ liệu ChapterData vào ViewModel
+                viewModel_Read.ChapterData = chapterData;
+
+                // var prev_chap = chapterData.Where(c => int.Parse(c.num_Chapter) == int.Parse(numChap) -1).FirstOrDefault().ToJson();
+                // var next_chap = chapterData.Where(c => int.Parse(c.num_Chapter) == int.Parse(numChap) +1).FirstOrDefault().ToJson();
+                // var prev_chap = Newtonsoft.Json.JsonConvert.SerializeObject(
+                //     chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(numChap) - 1)
+                // );
+                // var next_chap = Newtonsoft.Json.JsonConvert.SerializeObject(
+                //     chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(numChap) + 1)
+                // );
+
+
+                // viewModel_Read.prev_chap = prev_chap;
+                // viewModel_Read.next_chap = next_chap;
+
+                        // Tìm Chapter trước và Chapter sau
+        var prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
+        var next_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) + 1);
+
+        // Gán các đối tượng Chap vào ViewModel
+        viewModel_Read.prev_chap = prev_chap;
+        viewModel_Read.next_chap = next_chap;
+            }
 
             var readManga = await GetImagePageManga(linkchap);
             _logger.LogInformation($"===== {readManga}====");
@@ -67,7 +93,7 @@ namespace Areas.Manga.Controllers
             viewModel_Read.data_Read = readManga;
             viewModel_Read.Chapter_path = path;
             viewModel_Read.chapter_Images = imageChap;
-
+            viewModel_Read.id_manga = id_manga;
             var userName = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
@@ -99,8 +125,9 @@ namespace Areas.Manga.Controllers
                 }
                 await _mangaContext.SaveChangesAsync();
             }
-  
-                return View(viewModel_Read);
+
+            ViewData["numChap"] = chapterName;
+            return View(viewModel_Read);
         }
 
         //Get
@@ -122,7 +149,7 @@ namespace Areas.Manga.Controllers
             var imageChap = readManga.Chapter_Image;
 
             var path = readManga.Chapter_Path;
-            
+
             viewModel_Read.data_Read = readManga;
             viewModel_Read.Chapter_path = path;
             viewModel_Read.chapter_Images = imageChap;
@@ -131,21 +158,21 @@ namespace Areas.Manga.Controllers
 
         public async Task<Read_Items> GetImagePageManga(string linkchap)
         {
-             _logger.LogInformation("===== Goi API Chapter====");
-             _logger.LogInformation($"===== {linkchap}====");
+            _logger.LogInformation("===== Goi API Chapter====");
+            _logger.LogInformation($"===== {linkchap}====");
 
             var response = await httpClient.GetAsync(linkchap);
             _logger.LogInformation($"===== {response}====");
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var jsonString_Read = await response.Content.ReadAsStringAsync();
 
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse_Reads>(jsonString_Read, new JsonSerializerOptions
                 {
-                     PropertyNameCaseInsensitive = true,
-                        DefaultBufferSize = 4096, // Tăng kích thước bộ đệm
-                        WriteIndented = false,    // Tắt định dạng dễ đọc (cho tốc độ nhanh hơn)
-                        MaxDepth = 64             // Đặt độ sâu tối đa của JSON
+                    PropertyNameCaseInsensitive = true,
+                    DefaultBufferSize = 4096, // Tăng kích thước bộ đệm
+                    WriteIndented = false,    // Tắt định dạng dễ đọc (cho tốc độ nhanh hơn)
+                    MaxDepth = 64             // Đặt độ sâu tối đa của JSON
                 });
 
                 var mangaRead = apiResponse?.data_Read?.Item;
@@ -153,11 +180,12 @@ namespace Areas.Manga.Controllers
                 return mangaRead;
             }
 
-             else{
-                  _logger.LogError("Không lấy được dữ liệu chi tiết manga từ API.");
-                  return null;
-               }
-             
+            else
+            {
+                _logger.LogError("Không lấy được dữ liệu chi tiết manga từ API.");
+                return null;
+            }
+
         }
     }
 }

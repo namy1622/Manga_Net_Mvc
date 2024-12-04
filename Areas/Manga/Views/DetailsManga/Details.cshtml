@@ -119,7 +119,9 @@
                     {
                         <a class="number-item"
                            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
-                           asp-route-linkchap="@number.link_chap" asp-route-comicId="@Model.MangaDetails.Id" 
+                           asp-route-linkchap="@number.link_chap"
+                          
+                           asp-route-comicId="@Model.MangaDetails.Id" 
                            asp-route-chapterName="@number.num_Chapter">
                             @number.num_Chapter
                         </a>
