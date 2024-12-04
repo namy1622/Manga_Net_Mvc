@@ -4,6 +4,8 @@ using BTL_WebManga.Models;
 using Manga.Home.Models;
 using System.Text.Json;
 using Manga.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Areas.Manga.Controllers;
 
@@ -37,7 +39,7 @@ public class HomeController : Controller
     // [Route("/api/home")]
     [HttpGet]
     // [Route("")]
-    public async Task<IActionResult> Index(int currentPage, int pagesize)
+    public async Task<IActionResult> Index(int currentPage, int pagesize, string searchName)
     {
 
         try
@@ -72,9 +74,15 @@ public class HomeController : Controller
                     //var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
                     _logger.LogInformation("===== Thành công lấy seoOnPage ====");
 
-                    // Truyền dữ liệu vào View
-                    ViewBag.MangaList = mangaList;
-                    // ViewBag.OgImages = ogImages;
+                    // Tìm kiếm 
+
+                    if (!string.IsNullOrEmpty(searchName))
+                    {
+                        mangaList = mangaList
+                            .Where(s => s.Name != null && s.Name.ToUpper().Contains(searchName.ToUpper()))
+                            .DistinctBy(s => s.Name)
+                            .ToList();
+                    }
 
                     //-- Phân trang--
                     int totalManga = mangaList.Count();
@@ -112,7 +120,7 @@ public class HomeController : Controller
                     //-- end Phân trang --/=
                     _logger.LogInformation($"===== currentPage = {currentPage} ====");
                     _logger.LogInformation($"===== pagesize = {pagesize} ====");
-                    return View();
+                    return View(mangaList);
                 }
                 else
                 {
@@ -151,57 +159,3 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
-
-
-// _logger.LogInformation("===== Truoc Success ====");
-
-// if (response.IsSuccessStatusCode)
-// {
-//     _logger.LogInformation("===== Sau Success ====");
-
-//     var jsonString = await response.Content.ReadAsStringAsync();
-
-//     var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
-//     {
-//         PropertyNameCaseInsensitive = true
-//     });
-
-//     _logger.LogInformation($"Received response with status code: {response.StatusCode}");
-//     _logger.LogInformation($"API Response: {jsonString}");
-
-
-//     _logger.LogInformation("===== Truoc 3dk ====");
-//     _logger.LogInformation($"===== {apiResponse.Data.SeoOnPage} ====");
-//     _logger.LogInformation($"===== {apiResponse.Data.InfoMangaList} ====");
-//     _logger.LogInformation($"===== {apiResponse} ====");
-
-//     // if (apiResponse != null && apiResponse.InfoMangaList != null && apiResponse.SeoOnPage != null)
-//    if (apiResponse?.Data.InfoMangaList != null && apiResponse?.Data.SeoOnPage != null)
-//     {
-//         _logger.LogInformation("===== Goi API thanh cong, tai da len View ====");
-
-//         // Lấy danh sách manga
-//         var mangaList = apiResponse.Data.InfoMangaList;
-//         _logger.LogInformation("===== thanh cong mangaList ====");
-
-//         // Lấy danh sách og_image
-//         var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
-//         _logger.LogInformation("===== thanh cong seoOnPage ====");
-//         ViewBag.MangaList = mangaList;
-//         ViewBag.OgImages = ogImages;
-//         _logger.LogInformation("===== finish ====");
-//         return View();
-//     }
-//     else
-//     {
-//         _logger.LogInformation("=========== Không có dữ liệu trả về từ API.");
-//         ViewBag.Error = "Không có dữ liệu trả về từ API.";
-//         return View(new List<InfoMangaModels>());
-//     }
-// }
-// else
-// {
-//     _logger.LogError($"API call failed with status code {response.StatusCode}");
-//     ViewBag.Error = "Không thể lấy dữ liệu từ API.";
-//     return View(new List<InfoMangaModels>());
-// }

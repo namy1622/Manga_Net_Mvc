@@ -46,17 +46,18 @@
                         </li>
                     </ul>
 
+                    <form asp-controller="Home" asp-action="Index" method="get">
+                        <div class=" d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
 
-                    <div class=" d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
+                            <div class=" search input-group-prepend d-flex justify-content-center ">
+                                <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện" name="searchName">
+                                <button class="search-icon input-group-text">
+                                    <img src="~/Icon/search.png">
+                                </button>
+                            </div>
 
-                        <div class=" search input-group-prepend d-flex justify-content-center ">
-                            <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện">
-                            <button class="search-icon input-group-text">
-                                <img src="~/Icon/search.png">
-                            </button>
                         </div>
-
-                    </div>
+                    </form>
 
                     <partial name="_LoginPartial"></partial>
 
