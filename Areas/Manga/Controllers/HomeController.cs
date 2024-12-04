@@ -64,24 +64,18 @@ public class HomeController : Controller
                 // if (apiResponse?.Data.InfoMangaList != null && apiResponse?.Data.SeoOnPage != null)
                 if (apiResponse?.Data.InfoMangaList != null)
                 {
-                    _logger.LogInformation("===== Đọc dữ liệu thành công từ tệp JSON, đang truyền vào View ====");
-
-                    // Lấy danh sách manga
                     var mangaList = apiResponse.Data.InfoMangaList;
-                    _logger.LogInformation("===== Thành công lấy mangaList ====");
-
-                    // Lấy danh sách og_image
-                    //var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
-                    _logger.LogInformation("===== Thành công lấy seoOnPage ====");
 
                     // Tìm kiếm 
-
                     if (!string.IsNullOrEmpty(searchName))
                     {
                         mangaList = mangaList
-                            .Where(s => s.Name != null && s.Name.ToUpper().Contains(searchName.ToUpper()))
-                            .DistinctBy(s => s.Name)
-                            .ToList();
+                        .Where(s =>
+                            (s.Name != null && s.Name.ToUpper().Contains(searchName.ToUpper())) ||
+                            (s.Author != null && s.Author.ToUpper().Contains(searchName.ToUpper()))
+                        )
+                        .DistinctBy(s=> s.Name)
+                        .ToList();
                     }
 
                     //-- Phân trang--

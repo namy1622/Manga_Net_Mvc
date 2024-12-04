@@ -14,27 +14,24 @@
     <link rel="stylesheet" href="~/css/Home/home-page.css" asp-append-version="true">
 </head>
 
-<body>
-    <header class="">
-        <nav class=" nav navbar navbar-expand-sm navbar-toggleable-sm  border-bottom box-shadow  app-navbar">
+<body class="d-flex-wrapper">
+    <header>
+        <nav class="nav navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow app-navbar">
             <div class="container-fluid">
-
                 <partial name="_MenumanagePartial" />
 
-                <a class=" name-branch navbar-brand" asp-area="Manga" asp-controller="Home" asp-action="Index">MangaHay</a>
+                <a class="name-branch navbar-brand" asp-area="Manga" asp-controller="Home" asp-action="Index">MangaHay</a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class=" navbar-nav flex-grow-1 ">
-
-                        <li class=" nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="" asp-action="">Item 1</a>
                         </li>
@@ -47,45 +44,38 @@
                     </ul>
 
                     <form asp-controller="Home" asp-action="Index" method="get">
-                        <div class=" d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
-
-                            <div class=" search input-group-prepend d-flex justify-content-center ">
+                        <div class="d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
+                            <div class="search input-group-prepend d-flex justify-content-center">
                                 <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện" name="searchName">
                                 <button class="search-icon input-group-text">
-                                    <img src="~/Icon/search.png">
+                                    <img src="~/Icon/search.png" alt="Search">
                                 </button>
                             </div>
-
                         </div>
                     </form>
 
                     <partial name="_LoginPartial"></partial>
-
                 </div>
-
-
-
-                
             </div>
-            @* <nav class="bottom_nav" style="height: 20px; width: 100%; background: rebeccapurple;"></nav> *@
         </nav>
-
     </header>
-    <div> @*class="container"*@
-        <main role="main" class="pb-3 ">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="bg-primary  border-top footer text-muted">
-        @* <div class="container">
-        &copy; 2024 - BTL_WebManga - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div> *@
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            <p>Copyright © 2024 - Truyen Tranh; 2024 - MVC</p>
+            <p>Đây là trang truyện tranh</p>
+        </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 
 </html>
