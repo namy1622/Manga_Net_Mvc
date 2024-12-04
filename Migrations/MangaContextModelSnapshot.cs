@@ -61,6 +61,10 @@ namespace BTL_WebManga.Migrations
                     b.Property<DateTime>("LastReadTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("LinkChapter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NameChapter")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

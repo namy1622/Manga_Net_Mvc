@@ -52,16 +52,15 @@ namespace Areas.Manga.C
         {
             var viewModel = new DetailsManga_ViewModel();
 
-
-            // var mangaDetails = await GetMangaDetails(slug);
-            // viewModel.MangaDetails = mangaDetails;
-
-            // var relatedMangas = await GetRelatedMangas(slug);
-            // viewModel.RelatedMangas = relatedMangas;
+            if (string.IsNullOrEmpty(slug))
+            {
+                _logger.LogError("Slug bị null hoặc rỗng.");
+                return NotFound("Slug không hợp lệ.");
+            }
 
             // Gọi các API đồng thời
-            var mangaDetailsTask =  GetMangaDetails(slug);
-            var relatedMangasTask =  GetRelatedMangas(slug);
+            var mangaDetailsTask = GetMangaDetails(slug);
+            var relatedMangasTask = GetRelatedMangas(slug);
 
             // Chờ tất cả các API hoàn thành
             await Task.WhenAll(mangaDetailsTask, relatedMangasTask);
@@ -71,70 +70,37 @@ namespace Areas.Manga.C
             var relatedMangas = await relatedMangasTask;
 
             var filter_related = relatedMangas.Where(p => p.Category.Any(c => c.slug_category == "fantasy")).ToList();
-            // Gán dữ liệu vào ViewModel
             viewModel.MangaDetails = mangaDetails;
             viewModel.RelatedMangas = filter_related;
 
             if (mangaDetails != null)
             {
-                viewModel.ChapterData = mangaDetails.Chapters.FirstOrDefault().ChapterData;
+                viewModel.ChapterData = mangaDetails.Chapters.FirstOrDefault()?.ChapterData;
                 viewModel.Categories = mangaDetails.Category;
             }
 
+            // Kiểm tra xem người dùng đã đọc truyện này chưa
             var username = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
             if (user != null && viewModel.MangaDetails != null)
             {
+                // Kiểm tra trong bảng ReadingHistory xem có bản ghi đọc truyện này chưa
+                var readingHistory = await _mangaContext.ReadingHistory
+                    .FirstOrDefaultAsync(rh => rh.UserID == user.Id && rh.IdManga == mangaDetails.Id);
+
+                // Nếu có lịch sử đọc, hiển thị nút "Đọc tiếp"
+                viewModel.HasReadingHistory = readingHistory != null;
+
+                // Kiểm tra xem manga có trong danh sách yêu thích của người dùng không
                 viewModel.IsFavourite = await _mangaContext.UserFavouriteComic
                     .AnyAsync(f => f.UserID == user.Id && f.IdManga == viewModel.MangaDetails.Id);
             }
-
 
             return View(viewModel);
         }
 
 
-        private async Task<IEnumerable<InfoMangaModels>?> GetRelatedMangas(string? slug)
-        {
-            // show Truyen tương tự 
-            // try
-            // {
-                _logger.LogInformation("===== Goi API Manga ====");
-
-                // Đọc dữ liệu từ tệp JSON
-                if (System.IO.File.Exists(jsonFilePath))
-                {
-                    var jsonString = await System.IO.File.ReadAllTextAsync(jsonFilePath);
-
-                    // Giải mã (deserialize) dữ liệu JSON
-                    var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                        DefaultBufferSize = 4096, // Tăng kích thước bộ đệm
-                        WriteIndented = false,    // Tắt định dạng dễ đọc (cho tốc độ nhanh hơn)
-                        MaxDepth = 64             // Đặt độ sâu tối đa của JSON
-                    });
-
-                    _logger.LogInformation($"Đã nhận dữ liệu từ tệp JSON: {jsonString}");
-
-                    if (apiResponse?.Data.InfoMangaList != null)
-                    {
-
-                        // return apiResponse.Data.InfoMangaList.Where(item => item.Slug == slug);
-                        return apiResponse.Data.InfoMangaList;
-                    }
-                    else
-                    {
-                        _logger.LogInformation("=========== Không có dữ liệu trong tệp JSON.");
-                        return null;
-                    }
-                }
-                else
-                {
-                    _logger.LogError($"Không tìm thấy tệp JSON tại đường dẫn {jsonFilePath}");
-                    return null;
-                }
-            }
         // catch (Exception ex)
         // {
         //     _logger.LogError($"Lỗi khi gọi API: {ex.Message}");
@@ -225,7 +191,7 @@ namespace Areas.Manga.C
             await _mangaContext.SaveChangesAsync();
 
             return RedirectToAction("Details", new { slug = manga.Slug });
-        }   
+        }
 
         public async Task<DetailsMangaModel> GetMangaDetails(string? slug)
         {
@@ -275,14 +241,56 @@ namespace Areas.Manga.C
                 
 
             }
-            // catch (Exception ex)
+
+        private async Task<IEnumerable<InfoMangaModels>?> GetRelatedMangas(string? slug)
+        {
+            // show Truyen tương tự 
+            // try
             // {
-            //     _logger.LogError($"Lỗi khi gọi API Details: {ex.Message}");
+            _logger.LogInformation("===== Goi API Manga ====");
 
-            // }
+            // Đọc dữ liệu từ tệp JSON
+            if (System.IO.File.Exists(jsonFilePath))
+            {
+                var jsonString = await System.IO.File.ReadAllTextAsync(jsonFilePath);
 
-            
+                // Giải mã (deserialize) dữ liệu JSON
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    DefaultBufferSize = 4096, // Tăng kích thước bộ đệm
+                    WriteIndented = false,    // Tắt định dạng dễ đọc (cho tốc độ nhanh hơn)
+                    MaxDepth = 64             // Đặt độ sâu tối đa của JSON
+                });
+
+                _logger.LogInformation($"Đã nhận dữ liệu từ tệp JSON: {jsonString}");
+
+                if (apiResponse?.Data.InfoMangaList != null)
+                {
+
+                    // return apiResponse.Data.InfoMangaList.Where(item => item.Slug == slug);
+                    return apiResponse.Data.InfoMangaList;
+                }
+                else
+                {
+                    _logger.LogInformation("=========== Không có dữ liệu trong tệp JSON.");
+                    return null;
+                }
+            }
+            else
+            {
+                _logger.LogError($"Không tìm thấy tệp JSON tại đường dẫn {jsonFilePath}");
+                return null;
+            }
         }
+        // catch (Exception ex)
+        // {
+        //     _logger.LogError($"Lỗi khi gọi API Details: {ex.Message}");
+
+        // }
+
+
+    }
 
     }
 // }

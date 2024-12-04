@@ -10,19 +10,20 @@ namespace BTL_WebManga.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "IdChapter",
+            migrationBuilder.AddColumn<string>(
+                name: "LinkChapter",
                 table: "ReadingHistory",
-                newName: "NameChapter");
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "NameChapter",
-                table: "ReadingHistory",
-                newName: "IdChapter");
+            migrationBuilder.DropColumn(
+                name: "LinkChapter",
+                table: "ReadingHistory");
         }
     }
 }

@@ -59,13 +59,13 @@
                             <form id="favouriteForm" method="post">
                                 @if (Model.IsFavourite)
                                 {
-                                    <button type="submit" class="btn btn-danger" asp-action="UnFavourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" onclick="toggleFavourite()">
+                                    <button type="submit" class="btn btn-danger" asp-action="UnFavourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" >
                                         Hủy yêu thích
                                     </button>
                                 }
                                 else
                                 {
-                                    <button type="submit" class="btn btn-success" asp-action="Favourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" onclick="toggleFavourite()">
+                                    <button type="submit" class="btn btn-success" asp-action="Favourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id">
                                         Yêu thích
                                     </button>
                                 }
@@ -79,11 +79,24 @@
                                asp-route-chapterName="@Model.ChapterData.FirstOrDefault().num_Chapter">
                                 Đọc từ đầu 
                             </a>
-                            <a type="button" class="btn btn-success text-dark w-20 font-cus" style="font-size: 14px;"
-                               asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.LastOrDefault().link_chap" asp-route-comicId="@Model.MangaDetails.Id"
-                               asp-route-chapterName="@Model.ChapterData.LastOrDefault().num_Chapter">
-                                Chap mới nhất
-                            </a>
+                            @if (Model.HasReadingHistory)
+                            {
+                                <a type="button" class="btn btn-success text-dark w-20 font-cus" style="font-size: 14px;"
+                                   asp-area="Manga" asp-controller="ReadManga" asp-action="ResumeReading" asp-route-mangaId="@Model.MangaDetails.Id">
+                                    Đọc tiếp
+                                </a>
+                            }
+                            else
+                            {
+                                <a type="button" class="btn btn-success text-dark w-20 font-cus" style="font-size: 14px;"
+                                   asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.LastOrDefault().link_chap" asp-route-comicId="@Model.MangaDetails.Id"
+                                   asp-route-chapterName="@Model.ChapterData.LastOrDefault().num_Chapter">
+                                    Chap mới nhất
+                                </a>
+                            }
+                            
+
+                            
                         </div>
                     </div>
                 </div>
@@ -192,45 +205,6 @@
     @* padding-bottom: 15px; /* Thêm không gian ở dưới cùng */ *@
     }
 </style>
-
-
-
-
-<script>
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: formData.toString()
-    })
-        .then(response => {
-            if (response.ok) {
-                const button = event.target;
-                if (action === "Favourite") {
-                    button.innerText = "Hủy yêu thích";
-                    button.classList.remove("btn-success");
-                    button.classList.add("btn-danger");
-                } else {
-                    button.innerText = "Yêu thích";
-                    button.classList.remove("btn-danger");
-                    button.classList.add("btn-success");
-                }
-            } else {
-                response.text().then(text => {
-                    console.log("Lỗi server:", text);
-                    alert("Lỗi: " + text);
-                });
-            }
-        })
-        .catch(error => {
-            console.error("Lỗi khi gửi yêu cầu:", error);
-            alert("Đã xảy ra lỗi, vui lòng thử lại.");
-        });
-</script>
-
-
-
 
 <style>
     .number-container {
