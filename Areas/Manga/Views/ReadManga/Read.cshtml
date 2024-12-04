@@ -1,17 +1,61 @@
+@using Manga.Home.Models
 @* <h1>Day la trang doc</h1> *@
 
+@* @model Areas.Manga.Models.ViewModels.ReadManga_ViewModel; *@
+
 @model Areas.Manga.Models.ViewModels.ReadManga_ViewModel;
+
 
 @{
     var baseImage = "https://sv1.otruyencdn.com/";
     @* var chapter_path = $"{@Model.data_Read.Chapter_Path}" + "/"; *@
     var chapter_path = Model?.Chapter_path != null ? $"{Model.Chapter_path}/" : "default-path/";
+
+    @* var details_chap =  (Areas.Manga.Models.ViewModels.DetailsManga_ViewModel)ViewData["Details_Chap"]; *@
+        @* var details_chap =  TempData["data_chap"] as List<ChapterData>; *@
+
+        @* var details_chap = ViewData["Details_Chap"] as List<Chapter>; *@
+
 }
 <div class="row">
 
-    <div class="col-md-2 h100 bg-warning">LEFT</div>
+    <div class="col-md-2 h100 bg-warning">
+        <div class="btn-group">
+                <h2>@ViewData["Details_Chap"]</h2>
+            @* <a class="btn btn-danger" href="#">Split Button</a>
+            
+                <div class="btn btn-success dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown"></div>
+
+                    <div class="dropdown-menu" >
+                        @if(details_chap != null){
+                            @foreach(var chap in details_chap){
+                             <a class="dropdown-item" href="#">@chap</a>
+                            }
+                        }  
+                        else{
+                             <a class="dropdown-item" href="#">null</a>
+                        } 
+                    </div>*@
+        </div> 
+    </div>
 
     <div class="container d-flex flex-column align-items-center py-4 col-md-8 ">
+
+    <div class="dropdown">
+        <div class="dropdown-toggle text-danger" data-bs-toggle="dropdown">
+            <strong>Dropdown Menu</strong>
+        </div>
+        <div class="dropdown-menu">
+            @if(Model.ChapterData != null){
+                <a class="dropdown-item" href="#">Menu 1</a>
+            }
+            else{
+                <a class="dropdown-item" href="#">null</a>
+            }
+        </div>
+    </div>
+    <hr>
+
         @if (Model?.chapter_Images != null && Model.chapter_Images.Any())
         {
             @foreach (var page in Model.chapter_Images)

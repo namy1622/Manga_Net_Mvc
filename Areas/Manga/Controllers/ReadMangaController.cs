@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
+
 namespace Areas.Manga.Controllers
 {
      [Area("Manga")]
@@ -40,6 +41,16 @@ namespace Areas.Manga.Controllers
         public async Task<ActionResult> Read(string linkchap, string comicId, string chapterName)
         {
             var viewModel_Read = new ReadManga_ViewModel();
+    
+ // Lấy dữ liệu ChapterData từ TempData
+    var chapterDataJson = TempData["ChapterData"] as string;
+    
+    if (!string.IsNullOrEmpty(chapterDataJson))
+    {
+        var chapterData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ChapterData>>(chapterDataJson);
+         // Gán dữ liệu ChapterData vào ViewModel
+        viewModel_Read.ChapterData = chapterData;
+    }
 
             var readManga = await GetImagePageManga(linkchap);
             _logger.LogInformation($"===== {readManga}====");
@@ -49,6 +60,9 @@ namespace Areas.Manga.Controllers
 
             var path = readManga.Chapter_Path;
             _logger.LogInformation($"===== {path}====");
+
+            // var details_chap = new DetailsManga_ViewModel();
+            // ViewData["Details_Chap"] = ViewData["data_chap"];
 
             viewModel_Read.data_Read = readManga;
             viewModel_Read.Chapter_path = path;
@@ -108,7 +122,7 @@ namespace Areas.Manga.Controllers
             var imageChap = readManga.Chapter_Image;
 
             var path = readManga.Chapter_Path;
-
+            
             viewModel_Read.data_Read = readManga;
             viewModel_Read.Chapter_path = path;
             viewModel_Read.chapter_Images = imageChap;

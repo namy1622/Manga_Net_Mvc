@@ -13,6 +13,6 @@ namespace Areas.Manga.Models.ViewModels
 
         public string Chapter_path {set; get;}
 
-
+public IEnumerable<ChapterData>? ChapterData {set; get;}
     }
 }    

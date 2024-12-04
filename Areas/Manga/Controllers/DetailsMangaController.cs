@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using NuGet.Protocol;
 
-namespace Areas.Manga.C
+namespace Areas.Manga.Controllers
 {
     [Area("Manga")]
     [Route("/details/[action]")]
@@ -33,6 +33,7 @@ namespace Areas.Manga.C
             _mangaContext = mangaContext;
         }
 
+        
 
         public IActionResult Splash(string slug)
         {
@@ -58,6 +59,9 @@ namespace Areas.Manga.C
                 return NotFound("Slug không hợp lệ.");
             }
 
+   
+    
+
             // Gọi các API đồng thời
             var mangaDetailsTask = GetMangaDetails(slug);
             var relatedMangasTask = GetRelatedMangas(slug);
@@ -69,6 +73,10 @@ namespace Areas.Manga.C
             var mangaDetails = await mangaDetailsTask;
             var relatedMangas = await relatedMangasTask;
 
+    // Lưu toàn bộ ChapterData vào TempData
+    TempData["ChapterData"] = Newtonsoft.Json.JsonConvert.SerializeObject(mangaDetails.Chapters.FirstOrDefault()?.ChapterData);
+
+
             var filter_related = relatedMangas.Where(p => p.Category.Any(c => c.slug_category == "fantasy")).ToList();
             viewModel.MangaDetails = mangaDetails;
             viewModel.RelatedMangas = filter_related;
@@ -76,6 +84,8 @@ namespace Areas.Manga.C
             if (mangaDetails != null)
             {
                 viewModel.ChapterData = mangaDetails.Chapters.FirstOrDefault()?.ChapterData;
+
+                // ViewData["data_chap"] = viewModel.ChapterData;
                 viewModel.Categories = mangaDetails.Category;
             }
 
@@ -112,6 +122,7 @@ namespace Areas.Manga.C
         [HttpPost]
         public async Task<IActionResult> Favourite(string comicId)
         {
+            
             var username = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
