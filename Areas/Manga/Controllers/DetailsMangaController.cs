@@ -131,6 +131,7 @@ HttpContext.Session.SetString("id_Manga", mangaDetails.Id);
         {
             
             var username = User.Identity.Name;
+            // var userID = User.Identity.
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
             if (user == null)

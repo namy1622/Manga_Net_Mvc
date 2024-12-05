@@ -3,11 +3,19 @@
     ViewData["Title"] = "Gán role";
 }
 
-<h4>Thiết lập role cho user: @Model.user.UserName</h4>
-<partial name="_StatusMessage" />
+<div class="container">
 
-<div class="row">
-    <div class="col-md-6">
+
+<hr>
+<h4 class="ms-5">Thiết lập role cho user: @Model.user.UserName</h4>
+<hr>
+<partial name="_StatusMessage" />
+<hr>
+
+<div class="row ">
+
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
         <form id="set-password-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -20,11 +28,12 @@
                 <span asp-validation-for="RoleNames" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
-            <a class="btn btn-primary" asp-action="Index">Danh sách thành viên</a>
+
+            <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
+            <a class="btn btn-outline-primary mt-3 ms-3" asp-action="Index">Danh sách thành viên</a>
         </form>
         <hr>
-        <p>Các claim của user có được từ role:</p>
+        @* <p>Các claim của user có được từ role:</p>
         @if (Model.claimsInRole.Count >  0)
         {
             <ul>
@@ -48,14 +57,15 @@
                     </li>
                 }
             </ul>
-        }
+        } *@
 
 
 
 
     </div>
+    <div class="col-md-2"></div>
 </div>
-
+</div>
 
 @section Scripts {
 

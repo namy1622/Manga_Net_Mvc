@@ -23,14 +23,17 @@ builder.Services.AddDbContext<MangaContext>(options =>
     //string connectString = builder.Configuration.GetConnectionString("AppMvcConnectionString");
     options.UseSqlServer(builder.Configuration.GetConnectionString("Web_Manga"));
 });
+// Đăng ký dịch vụ của bạn, ví dụ:
+builder.Services.AddControllersWithViews();
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDistributedMemoryCache(); // Thêm bộ nhớ cache phân phối (Distributed Cache)
-    builder.Services.AddSession(options =>
-    {
-        options.Cookie.HttpOnly = true;
-        options.Cookie.IsEssential = true;
-        options.IdleTimeout = TimeSpan.FromMinutes(30); // Đặt thời gian hết hạn của session
-    });
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Đặt thời gian hết hạn của session
+});
 
 //---
 builder.Services.AddRazorPages();
@@ -187,21 +190,41 @@ app.UseAuthorization(); // xac thuc quyen truy cap
 #pragma warning disable ASP0014 // Suggest using top level route registrations
 app.UseEndpoints(endpoint =>
 {
+
+    endpoint.MapControllers();
     // Đặt trang splash làm mặc định
-    endpoint.MapControllerRoute(
-        name: "default",
-        pattern: "{area=Manga}/{controller=Home}/{action=Splash}/{id?}");
+    // endpoint.MapControllerRoute(
+    //     name: "default",
+    //     pattern: "{area=Manga}/{controller=Home}/{action=Splash}/{id?}");
+
+    // endpoint.MapAreaControllerRoute(
+    //     name: "default",
+    //     pattern: "/{controller=Home}/{action=Splash}/{id?}",
+    //     areaName:"Manga");
+        
 
     // endpoint.MapControllerRoute(
     //     name: "default",
-    //     pattern: "{area=Manga}/{controller=Home}/{action=Index}/{id?}");
+    //     pattern: "{area=Identity}/{controller=User}/{action=Index}/{id?}");
 
-    endpoint.MapControllerRoute(
+    
+ endpoint.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+        pattern: "{area=Manga}/{controller=Home}/{action=Index}/{id?}");
 
+    //Area
+        // endpoint.MapAreaControllerRoute(
+        //     name: "product",
+        //     pattern: "/{controller=User}/{action=Index}/{id?}",
+        //     areaName: "Identity"
+        // );
+// endpoint.MapControllerRoute(
+//         name: "default",
+//         pattern: "Identity/{controller=Home}/{action=Index}/{id?}");
 
-    endpoint.MapRazorPages(); // Nếu sử dụng Razor Pages
+        endpoint.MapControllerRoute(
+        name: "default",
+        pattern: "{controller}/{action=Index}/{id?}");
 });
 #pragma warning restore ASP0014 // Suggest using top level route registrations
 

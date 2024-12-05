@@ -2,11 +2,14 @@
 @{
     ViewData["Title"] = "Danh sách các thành viên";
 }
-<h2>@ViewData["Title"]</h2>
-<partial name="_StatusMessage"></partial>
-<p>Tổng số thành viên: @Model.totalUsers</p>
+<h2 class="d-flex justify-content-center text-align-center mt-3">@ViewData["Title"] </h2>
+<hr class="container">
 
-<table class="table">
+<p class="d-flex justify-content-center bg-success container" style="font-size: 18px; font-weight: 500;">Tổng số Member: @Model.totalUsers </p>
+
+<hr class="container">
+<partial name="_StatusMessage"></partial>
+<table class="table container">
     <tr>
         <th>Tên user</th>
         <th>Vai trò (role)</th>
@@ -41,4 +44,4 @@
     };
 }
 
-<partial name="_PagingXTL" model="@pagingmodel" />
+<partial name="_Paging" model="@pagingmodel" />

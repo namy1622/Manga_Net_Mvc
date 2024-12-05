@@ -25,7 +25,7 @@ using Manga.Data;
 namespace App.Areas.Identity.Controllers
 {
 
-    [Authorize(Roles = RoleName.Administrator)]
+    [Authorize(Roles = RoleName.Member)]
     [Area("Identity")]
     [Route("/ManageUser/[action]")]
     public class UserController : Controller

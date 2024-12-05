@@ -5,10 +5,12 @@
     ViewData["Title"] = "Đăng ký tài khoản";
 }
 
-<h1>@ViewData["Title"].</h1>
 
-<div class="row">
-    <div class="col-md-8">
+
+<div class="row container">
+    <div class="col-md-2"></div>
+    <div class="col-md-9" style="background-color: rgb(144, 226, 199);">
+        <h1>@ViewData["Title"].</h1>
         <section>   
             <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
                 <h4>Tạo tài khoản mới trên website.</h4>
@@ -42,17 +44,17 @@
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <div class="col-md-offset-2 col-md-10">
                         <button type="submit" class="btn btn-primary">Đăng ký</button>
                     </div>
                 </div>
             </form>          
         </section>
-    </div>
-    <div class="col-md-4">
+        <hr>
+        <div class="mt-5">
         <section>
-            <h4>Đăng nhập bằng tài khoản.</h4>
+            <h5>Đăng nhập bằng tài khoản.</h5>
             <hr />
             @{
                 var schemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
@@ -81,6 +83,9 @@
             }
         </section>
     </div>
+    </div>
+    <div class="col-md-2"></div>
+    
 </div>
 
 
