@@ -14,8 +14,8 @@ namespace Manga.Data
         {
 
         }
-        public DbSet<FavouriteComicModel> UserFavouriteComic { get; set; } = default!;
-        public DbSet<ReadingHistoryModel> ReadingHistory { get; set; } = default!;
+        public DbSet<FavouriteComicModel> UserFavouriteComic { get; set; } 
+        public DbSet<ReadingHistoryModel> ReadingHistory { get; set; } 
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -34,6 +34,22 @@ namespace Manga.Data
                     entityType.SetTableName(tableName.Substring(6));
                 }
             }
+
+            // Thi?t l?p quan h? gi?a FavouritesManga v� MangaUser
+            modelBuilder.Entity<FavouriteComicModel>()
+                .HasOne(f => f.User)
+                .WithMany() // M?t user c� th? c� nhi?u favourite
+                .HasForeignKey(f => f.UserID)
+                //.OnDelete(DeleteBehavior.Cascade); // X�a user s? x�a c? favourite
+                .OnDelete(DeleteBehavior.NoAction); 
+
+modelBuilder.Entity<ReadingHistoryModel>()
+                .HasOne(f => f.mangaUser)
+                .WithMany() // M?t user c� th? c� nhi?u favourite
+                .HasForeignKey(f => f.UserID)
+                //.OnDelete(DeleteBehavior.Cascade); // X�a user s? x�a c? favourite
+                .OnDelete(DeleteBehavior.NoAction); 
+
         }
 
 
