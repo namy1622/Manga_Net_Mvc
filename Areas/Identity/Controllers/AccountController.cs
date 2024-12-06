@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using App.Areas.Identity.Models.AccountViewModels;
+using Manga.Areas.Identity.Models.AccountViewModels;
 using App.ExtendMethods;
 using Manga.Models;
 using App.Utilities;
@@ -62,8 +62,8 @@ namespace App.Areas.Identity.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                 
-                var result = await _signInManager.PasswordSignInAsync(model.UserNameOrEmail, model.Password, model.RememberMe, lockoutOnFailure: true);                
+
+                var result = await _signInManager.PasswordSignInAsync(model.UserNameOrEmail, model.Password, model.RememberMe, lockoutOnFailure: true);
                 // Tìm UserName theo Email, đăng nhập lại
                 if ((!result.Succeeded) && AppUtilities.IsValidEmail(model.UserNameOrEmail))
                 {
@@ -72,7 +72,7 @@ namespace App.Areas.Identity.Controllers
                     {
                         result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
                     }
-                } 
+                }
 
                 if (result.Succeeded)
                 {
@@ -81,9 +81,9 @@ namespace App.Areas.Identity.Controllers
                 }
                 if (result.RequiresTwoFactor)
                 {
-                   return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 }
-                
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning(2, "Tài khoản bị khóa");
@@ -105,8 +105,24 @@ namespace App.Areas.Identity.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User đăng xuất");
-            return RedirectToAction("Index", "Home", new {area = "Home"});
+            // return RedirectToAction("Index", "Home", new {area = "Home"});
+
+            return RedirectToAction("Index", "Home", new { area = "Manga" });
+
         }
+        [HttpGet]
+        public IActionResult Logout(string a) { return View(); }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User đăng xuất");
+            // return RedirectToAction("Index", "Home", new {area = "Home"});
+
+            return RedirectToAction("Index", "Home", new { area = "Manga" });
+        }
+
         //
         // GET: /Account/Register
         [HttpGet]
@@ -142,13 +158,16 @@ namespace App.Areas.Identity.Controllers
                     // https://localhost:5001/confirm-email?userId=fdsfds&code=xyz&returnUrl=
                     var callbackUrl = Url.ActionLink(
                         action: nameof(ConfirmEmail),
-                        values: 
-                            new { area = "Identity", 
-                                  userId = user.Id, 
-                                  code = code},
+                        values:
+                            new
+                            {
+                                area = "Identity",
+                                userId = user.Id,
+                                code = code
+                            },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(model.Email, 
+                    await _emailSender.SendEmailAsync(model.Email,
                         "Xác nhận địa chỉ email",
                         @$"Bạn đã đăng ký tài khoản trên RazorWeb, 
                            hãy <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bấm vào đây</a> 
@@ -172,14 +191,14 @@ namespace App.Areas.Identity.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-        
+
         // GET: /Account/ConfirmEmail
         [HttpGet]
         [AllowAnonymous]
         public IActionResult RegisterConfirmation()
         {
             return View();
-        }       
+        }
 
         // GET: /Account/ConfirmEmail
         [HttpGet]
@@ -256,7 +275,7 @@ namespace App.Areas.Identity.Controllers
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
             }
-        } 
+        }
 
         //
         // POST: /Account/ExternalLoginConfirmation
@@ -279,7 +298,7 @@ namespace App.Areas.Identity.Controllers
                 var registeredUser = await _userManager.FindByEmailAsync(model.Email);
                 string externalEmail = null;
                 MangaUser externalEmailUser = null;
-                
+
                 // Claim ~ Dac tinh mo ta mot doi tuong 
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
@@ -304,7 +323,7 @@ namespace App.Areas.Identity.Controllers
                             return LocalRedirect(returnUrl);
                         }
                     }
-                    else 
+                    else
                     {
                         // registeredUser = externalEmailUser (externalEmail != Input.Email)
                         /*
@@ -320,13 +339,14 @@ namespace App.Areas.Identity.Controllers
                 if ((externalEmailUser != null) && (registeredUser == null))
                 {
                     ModelState.AddModelError(string.Empty, "Không hỗ trợ tạo tài khoản mới - có email khác email từ dịch vụ ngoài");
-                    return View();                    
+                    return View();
                 }
 
-                if((externalEmailUser == null) && (externalEmail == model.Email)) 
+                if ((externalEmailUser == null) && (externalEmail == model.Email))
                 {
                     // Chua co Account -> Tao Account, lien ket, dang nhap
-                    var newUser = new MangaUser() {
+                    var newUser = new MangaUser()
+                    {
                         UserName = externalEmail,
                         Email = externalEmail
                     };
@@ -346,9 +366,9 @@ namespace App.Areas.Identity.Controllers
                     else
                     {
                         ModelState.AddModelError("Không tạo được tài khoản mới");
-                        return View();   
+                        return View();
                     }
-                }           
+                }
 
 
                 var user = new MangaUser { UserName = model.Email, Email = model.Email };
@@ -412,7 +432,7 @@ namespace App.Areas.Identity.Controllers
                     $"Hãy bấm <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>vào đây</a> để đặt lại mật khẩu.");
 
                 return RedirectToAction(nameof(ForgotPasswordConfirmation));
-   
+
 
 
             }
@@ -471,7 +491,7 @@ namespace App.Areas.Identity.Controllers
         public IActionResult ResetPasswordConfirmation()
         {
             return View();
-        }        
+        }
 
         //
         // GET: /Account/SendCode
@@ -674,6 +694,6 @@ namespace App.Areas.Identity.Controllers
 
 
 
-    
-  }
+
+    }
 }

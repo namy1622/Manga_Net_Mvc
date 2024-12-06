@@ -5,31 +5,58 @@
 <h2 class="d-flex justify-content-center text-align-center mt-3">@ViewData["Title"] </h2>
 <hr class="container">
 
-<p class="d-flex justify-content-center bg-success container" style="font-size: 18px; font-weight: 500;">Tổng số Member: @Model.totalUsers </p>
+<p class="d-flex justify-content-center bg-success container" style="font-size: 18px; font-weight: 500;">Tổng số Member:
+    @Model.totalUsers </p>
 
 <hr class="container">
 <partial name="_StatusMessage"></partial>
 <table class="table container">
-    <tr>
-        <th>Tên user</th>
-        <th>Vai trò (role)</th>
-        <th>Tác vụ</th>
+    <tr class="row">
+        <th class="col-md-3">Tên user</th>
+        <th class="col-md-2">Tài khoản</th>
+        <th class="col-md-2">Luợt truy cập</th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2">Tác vụ</th>
     </tr>
     @foreach (var user in Model.users)
     {
-        <tr>
-            <td>@user.UserName</td>
-            <td>
-                @if (string.IsNullOrEmpty(user.RoleNames))
-                {
-                    <a class="text-dark" asp-action="AddRole" asp-route-id="@user.Id">+ Thêm roles</a>
-                }
-                else
-                {
-                    <a asp-action="AddRole" asp-route-id="@user.Id">@user.RoleNames</a>
-                }
+        <tr class="row">
+            <td class="col-md-3 ">
+                <div style="font-weight:600; font-size: 18px;">--| @user.UserName </div>
+
+                <div>
+                    <hr>----|
+                    @if (string.IsNullOrEmpty(user.RoleNames))
+                    {
+                        <a class="text-dark" asp-action="AddRole" asp-route-id="@user.Id" asp-route-nameUser="@user.UserName">+
+                            Thêm roles</a>
+                    }
+                    else
+                    {
+                        <a asp-action="AddRole" asp-route-id="@user.Id">@user.RoleNames</a>
+                    }
+                </div>
+
             </td>
-            <td>
+            <td class="col-md-2">
+                
+                <p> @user.ProviderLogin</p>
+            </td>
+            <td class="col-md-2">
+                <p> @user.VisitCount</p>
+                <p>Lần gần nhất: <br>@if (Convert.ToString(@user.LastVisit) == "01-Jan-01 12:00:00 AM")
+                    {
+                    <p>-- null</p>
+                    }
+                    else
+                    {
+                    <p>-- @user.LastVisit</p>
+                    } </p>
+                @* @user.visit.LastVisit *@
+
+            </td>
+            <td class="col-md-2"></td>
+            <td class="col-md-2">
                 <a class="btn btn-success btn-sm" asp-action="SetPassword" asp-route-id="@user.Id">Đặt mật khẩu</a>
             </td>
         </tr>
@@ -37,11 +64,11 @@
 </table>
 @{
     var pagingmodel = new PagingModel()
-    {
-        currentpage = Model.currentPage,
-        countpages = Model.countPages,
-        generateUrl = (int? p) => Url.Action("Index", new { p = p})
-    };
+            {
+                currentpage = Model.currentPage,
+                countpages = Model.countPages,
+                generateUrl = (int? p) => Url.Action("Index", new { p = p })
+            };
 }
 
 <partial name="_Paging" model="@pagingmodel" />

@@ -115,12 +115,16 @@ namespace App.Areas.Identity.Controllers
         
         // POST: /Role/Edit/1
         [HttpPost("{roleid}"), ActionName("Delete")]
+        // [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmAsync(string roleid)
         {
-            if (roleid == null) return NotFound("Không tìm thấy role");
+            if (roleid == null) {
+                Console.WriteLine("roleid không được truyền từ form."); 
+                return NotFound("Không tìm thấy role- Confirm_1");
+            }
             var role = await _roleManager.FindByIdAsync(roleid);
-            if  (role == null) return NotFound("Không tìm thấy role");
+            if  (role == null) return NotFound("Không tìm thấy role - conform_2");
              
             var result = await _roleManager.DeleteAsync(role);
 

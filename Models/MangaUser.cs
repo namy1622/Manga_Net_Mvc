@@ -9,5 +9,7 @@ namespace Manga.Models
     public class MangaUser: IdentityUser 
     {
     //    public virtual FavouriteComicModel FavouriteComicModel {set; get;}
+        
+        // public virtual UserVisit UserVisit {set; get;}
     }
 }

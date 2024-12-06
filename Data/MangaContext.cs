@@ -52,7 +52,7 @@ modelBuilder.Entity<ReadingHistoryModel>()
 
         }
 
-
+        public DbSet<UserVisit> UserVisits { get; set; }
 
     }
 }

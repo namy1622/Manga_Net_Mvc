@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using App.Areas.Identity.Models.AccountViewModels;
+using Manga.Areas.Identity.Models.AccountViewModels;
 using App.Areas.Identity.Models.ManageViewModels;
 using App.Areas.Identity.Models.RoleViewModels;
 using App.Areas.Identity.Models.UserViewModels;
@@ -21,11 +21,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Manga.Data;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace App.Areas.Identity.Controllers
 {
 
-    [Authorize(Roles = RoleName.Member)]
+    [Authorize(Roles = RoleName.Administrator)]
     [Area("Identity")]
     [Route("/ManageUser/[action]")]
     public class UserController : Controller
@@ -58,9 +59,38 @@ namespace App.Areas.Identity.Controllers
             var model = new UserListModel();
             model.currentPage = currentPage;
 
-            var qr = _userManager.Users.OrderBy(u => u.UserName);
+            // var qr = _userManager.Users.OrderBy(u => u.UserName);
+
+             var qr = _userManager.Users
+                        .OrderBy(u => u.UserName)
+                        // .Join(_context.UserVisits,
+                        //         u =>u.Id,
+                        //         uv => uv.UserId,
+                        //         (u,uv) => new UserAndRole{
+                        //             Id = u.Id,
+                        //             UserName = u.UserName,
+                        //             // RoleNames = string.Join(",", _userManager.GetRolesAsync(u).Result), // Fetch roles
+                        //              VisitCount = uv != null ? uv.VisitCount : 0, // Nếu không có bản ghi trong UserVisits, gán giá trị mặc định là 0
+                        //         LastVisit = uv != null ? uv.LastVisit : DateTime.MinValue // Nếu không có bản ghi trong UserVisits, gán giá trị mặc định là DateTime.MinValue
+                        //         });
+                        .GroupJoin(_context.UserVisits,
+                                   u => u.Id,
+                                   uv => uv.UserId,
+                                   (u, uvGroup) => new { User = u, UserVisits = uvGroup.DefaultIfEmpty() })
+                        .SelectMany(
+                            x => x.UserVisits.DefaultIfEmpty(),
+                            (x, uv) => new UserAndRole
+                            {
+                                Id = x.User.Id,
+                                UserName = x.User.UserName,
+                                VisitCount = uv != null ? uv.VisitCount : 0, // Nếu không có bản ghi trong UserVisits, gán giá trị mặc định là 0
+                                LastVisit = uv != null ? uv.LastVisit : DateTime.MinValue // Nếu không có bản ghi trong UserVisits, gán giá trị mặc định là DateTime.MinValue
+                            });
+
+           
 
             model.totalUsers = await qr.CountAsync();
+
             model.countPages = (int)Math.Ceiling((double)model.totalUsers / model.ITEMS_PER_PAGE);
 
             if (model.currentPage < 1)
@@ -68,20 +98,30 @@ namespace App.Areas.Identity.Controllers
             if (model.currentPage > model.countPages)
                 model.currentPage = model.countPages;
 
-            var qr1 = qr.Skip((model.currentPage - 1) * model.ITEMS_PER_PAGE)
-                        .Take(model.ITEMS_PER_PAGE)
-                        .Select(u => new UserAndRole() {
-                            Id = u.Id,
-                            UserName = u.UserName,
-                        });
+            var qr2 = qr.Skip((model.currentPage - 1) * model.ITEMS_PER_PAGE)
+                        .Take(model.ITEMS_PER_PAGE);
+                        // .Select(u => new UserAndRole() {
+                        //     Id = u.Id,
+                        //     UserName = u.UserName,
+                            
+                        // });
 
-            model.users = await qr1.ToListAsync();
-
+            model.users = await qr2.ToListAsync();
+            
             foreach (var user in model.users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
                 user.RoleNames = string.Join(",", roles);
+
+                 var userLogins = await _context.UserLogins
+                                       .Where(ul => ul.UserId == user.Id)
+                                       .Select(ul => ul.LoginProvider)
+                                       .ToListAsync();
+                  user.ProviderLogin = string.Join(",", userLogins);
+
             } 
+
+            // _userManager.GetUser
             
             return View(model);
         } 
@@ -109,7 +149,7 @@ namespace App.Areas.Identity.Controllers
             List<string> roleNames = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
             ViewBag.allRoles = new SelectList(roleNames);
 
-            await GetClaims(model);
+            // await GetClaims(model);
 
             return View(model);
         }
@@ -130,7 +170,7 @@ namespace App.Areas.Identity.Controllers
             {
                 return NotFound($"Không thấy user, id = {id}.");
             }
-            await GetClaims(model);
+            // await GetClaims(model);
 
             var OldRoleNames = (await _userManager.GetRolesAsync(model.user)).ToArray();
 
@@ -220,120 +260,120 @@ namespace App.Areas.Identity.Controllers
         }        
 
 
-        [HttpGet("{userid}")]
-        public async Task<ActionResult> AddClaimAsync(string userid)
-        {
+//         [HttpGet("{userid}")]
+//         public async Task<ActionResult> AddClaimAsync(string userid)
+//         {
             
-            var user = await _userManager.FindByIdAsync(userid);
-            if (user == null) return NotFound("Không tìm thấy user");
-            ViewBag.user = user;
-            return View();
-        }
+//             var user = await _userManager.FindByIdAsync(userid);
+//             if (user == null) return NotFound("Không tìm thấy user");
+//             ViewBag.user = user;
+//             return View();
+//         }
 
-        [HttpPost("{userid}")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddClaimAsync(string userid, AddUserClaimModel model)
-        {
+//         [HttpPost("{userid}")]
+//         [ValidateAntiForgeryToken]
+//         public async Task<ActionResult> AddClaimAsync(string userid, AddUserClaimModel model)
+//         {
             
-            var user = await _userManager.FindByIdAsync(userid);
-            if (user == null) return NotFound("Không tìm thấy user");
-            ViewBag.user = user;
-            if (!ModelState.IsValid) return View(model);
-            var claims = _context.UserClaims.Where(c => c.UserId == user.Id);
+//             var user = await _userManager.FindByIdAsync(userid);
+//             if (user == null) return NotFound("Không tìm thấy user");
+//             ViewBag.user = user;
+//             if (!ModelState.IsValid) return View(model);
+//             var claims = _context.UserClaims.Where(c => c.UserId == user.Id);
 
-            if (claims.Any(c => c.ClaimType == model.ClaimType && c.ClaimValue == model.ClaimValue))
-            {
-                ModelState.AddModelError(string.Empty, "Đặc tính này đã có");
-                return View(model);
-            }
+//             if (claims.Any(c => c.ClaimType == model.ClaimType && c.ClaimValue == model.ClaimValue))
+//             {
+//                 ModelState.AddModelError(string.Empty, "Đặc tính này đã có");
+//                 return View(model);
+//             }
 
-            await _userManager.AddClaimAsync(user, new Claim(model.ClaimType, model.ClaimValue));
-            StatusMessage = "Đã thêm đặc tính cho user";
+//             await _userManager.AddClaimAsync(user, new Claim(model.ClaimType, model.ClaimValue));
+//             StatusMessage = "Đã thêm đặc tính cho user";
                         
-            return RedirectToAction("AddRole", new {id = user.Id});
-        }        
+//             return RedirectToAction("AddRole", new {id = user.Id});
+//         }        
 
-        [HttpGet("{claimid}")]
-        public async Task<IActionResult> EditClaim(int claimid)
-        {
-            var userclaim = _context.UserClaims.Where(c => c.Id == claimid).FirstOrDefault();
-            var user = await _userManager.FindByIdAsync(userclaim.UserId);
+//         [HttpGet("{claimid}")]
+//         public async Task<IActionResult> EditClaim(int claimid)
+//         {
+//             var userclaim = _context.UserClaims.Where(c => c.Id == claimid).FirstOrDefault();
+//             var user = await _userManager.FindByIdAsync(userclaim.UserId);
 
-            if (user == null) return NotFound("Không tìm thấy user");
+//             if (user == null) return NotFound("Không tìm thấy user");
 
-            var model = new AddUserClaimModel()
-            {
-                ClaimType = userclaim.ClaimType,
-                ClaimValue = userclaim.ClaimValue
+//             var model = new AddUserClaimModel()
+//             {
+//                 ClaimType = userclaim.ClaimType,
+//                 ClaimValue = userclaim.ClaimValue
 
-            };
-            ViewBag.user = user;
-            ViewBag.userclaim = userclaim;
-            return View("AddClaim", model);
-        }
-        [HttpPost("{claimid}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditClaim(int claimid, AddUserClaimModel model)
-        {
-            var userclaim = _context.UserClaims.Where(c => c.Id == claimid).FirstOrDefault();
-            var user = await _userManager.FindByIdAsync(userclaim.UserId);
-            if (user == null) return NotFound("Không tìm thấy user");
+//             };
+//             ViewBag.user = user;
+//             ViewBag.userclaim = userclaim;
+//             return View("AddClaim", model);
+//         }
+//         [HttpPost("{claimid}")]
+//         [ValidateAntiForgeryToken]
+//         public async Task<IActionResult> EditClaim(int claimid, AddUserClaimModel model)
+//         {
+//             var userclaim = _context.UserClaims.Where(c => c.Id == claimid).FirstOrDefault();
+//             var user = await _userManager.FindByIdAsync(userclaim.UserId);
+//             if (user == null) return NotFound("Không tìm thấy user");
 
-            if (!ModelState.IsValid) return View("AddClaim", model);
+//             if (!ModelState.IsValid) return View("AddClaim", model);
 
-            if (_context.UserClaims.Any(c => c.UserId == user.Id 
-                && c.ClaimType == model.ClaimType 
-                && c.ClaimValue == model.ClaimValue 
-                && c.Id != userclaim.Id))
-                {
-                    ModelState.AddModelError("Claim này đã có");
-                    return View("AddClaim", model);
-                }
+//             if (_context.UserClaims.Any(c => c.UserId == user.Id 
+//                 && c.ClaimType == model.ClaimType 
+//                 && c.ClaimValue == model.ClaimValue 
+//                 && c.Id != userclaim.Id))
+//                 {
+//                     ModelState.AddModelError("Claim này đã có");
+//                     return View("AddClaim", model);
+//                 }
 
 
-            userclaim.ClaimType = model.ClaimType;
-            userclaim.ClaimValue = model.ClaimValue;
+//             userclaim.ClaimType = model.ClaimType;
+//             userclaim.ClaimValue = model.ClaimValue;
 
-            await _context.SaveChangesAsync();
-            StatusMessage = "Bạn vừa cập nhật claim";
+//             await _context.SaveChangesAsync();
+//             StatusMessage = "Bạn vừa cập nhật claim";
             
 
-            ViewBag.user = user;
-            ViewBag.userclaim = userclaim;
-            return RedirectToAction("AddRole", new {id = user.Id});
-        }
-        [HttpPost("{claimid}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteClaimAsync(int claimid)
-        {
-            var userclaim = _context.UserClaims.Where(c => c.Id == claimid).FirstOrDefault();
-            var user = await _userManager.FindByIdAsync(userclaim.UserId);
+//             ViewBag.user = user;
+//             ViewBag.userclaim = userclaim;
+//             return RedirectToAction("AddRole", new {id = user.Id});
+//         }
+//         [HttpPost("{claimid}")]
+//         [ValidateAntiForgeryToken]
+//         public async Task<IActionResult> DeleteClaimAsync(int claimid)
+//         {
+//             var userclaim = _context.UserClaims.Where(c => c.Id == claimid).FirstOrDefault();
+//             var user = await _userManager.FindByIdAsync(userclaim.UserId);
 
-            if (user == null) return NotFound("Không tìm thấy user");
+//             if (user == null) return NotFound("Không tìm thấy user");
 
-            await _userManager.RemoveClaimAsync(user, new Claim(userclaim.ClaimType, userclaim.ClaimValue));
+//             await _userManager.RemoveClaimAsync(user, new Claim(userclaim.ClaimType, userclaim.ClaimValue));
 
-            StatusMessage = "Bạn đã xóa claim";
+//             StatusMessage = "Bạn đã xóa claim";
             
-            return RedirectToAction("AddRole", new {id = user.Id});
-        }
+//             return RedirectToAction("AddRole", new {id = user.Id});
+//         }
 
-        private async Task GetClaims(AddUserRoleModel model)
-        {
-            var listRoles = from r in _context.Roles
-                join ur in _context.UserRoles on r.Id equals ur.RoleId
-                where ur.UserId == model.user.Id
-                select r;
+//         private async Task GetClaims(AddUserRoleModel model)
+//         {
+//             var listRoles = from r in _context.Roles
+//                 join ur in _context.UserRoles on r.Id equals ur.RoleId
+//                 where ur.UserId == model.user.Id
+//                 select r;
 
-            var _claimsInRole  = from c in _context.RoleClaims
-                                 join r in listRoles on c.RoleId  equals r.Id
-                                 select c;
-            model.claimsInRole = await _claimsInRole.ToListAsync();
+//             var _claimsInRole  = from c in _context.RoleClaims
+//                                  join r in listRoles on c.RoleId  equals r.Id
+//                                  select c;
+//             model.claimsInRole = await _claimsInRole.ToListAsync();
 
 
-           model.claimsInUserClaim  = await (from c in _context.UserClaims
-            where c.UserId == model.user.Id select c).ToListAsync();
+//            model.claimsInUserClaim  = await (from c in _context.UserClaims
+//             where c.UserId == model.user.Id select c).ToListAsync();
 
-        }
+//         }
   }
 }

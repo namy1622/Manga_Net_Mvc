@@ -19,15 +19,19 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <form asp-area="Identity" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
+    <form asp-area="Identity" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm"
+        class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li class="nav-item">
-                <a class="nav-link" asp-area="Identity"  asp-controller="Manage" asp-action="Index" title="Manage">Xin chào @UserManager.GetUserName(User)!</a>
+                <a class="nav-link" asp-area="Identity" asp-controller="Manage" asp-action="Index" title="Manage">Xin chào
+                    @UserManager.GetUserName(User)!</a>
             </li>
             <li class="nav-item">
                 @* <button type="submit" class="btn btn-link navbar-btn navbar-link" >Đăng xuất</button> *@
-                 <a class="nav-link" asp-area="Identity" asp-controller="Account" asp-action="Login">Đăng xuất</a>
+                @* <a class="nav-link" asp-area="Identity" asp-controller="Account" asp-action="Logout">Đăng xuất</a> *@
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Đăng xuất</a>
             </li>
+
         </ul>
     </form>
 }
@@ -42,3 +46,24 @@ else
         </li>
     </ul>
 }
+
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn đăng xuất không?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="logoutForm" method="post" asp-area="Identity" asp-controller="Account" asp-action="Logout"
+                    asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                    <button type="submit" class="btn btn-danger">Đăng xuất</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>

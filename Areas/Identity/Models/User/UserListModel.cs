@@ -14,12 +14,26 @@ namespace App.Areas.Identity.Models.UserViewModels
 
             public List<UserAndRole> users { get; set; }
 
+            //  public UserVisit userVisit {set;get;}
+
         }
 
         public class UserAndRole : MangaUser
         {
             public string RoleNames { get; set; }
+
+            public string ProviderLogin {set; get;}
+
+            //  public UserVisit visit{set; get;}
+            public int VisitCount {set; get;}
+            public DateTime LastVisit {set; get;}
         }
+
+
+
+
+
+        //public class Visited : UserVisi
 
 
 }
