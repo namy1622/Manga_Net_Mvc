@@ -79,17 +79,15 @@ namespace Areas.Manga.C
                 viewModel.Categories = mangaDetails.Category;
             }
 
-            // Kiểm tra xem người dùng đã đọc truyện này chưa
             var username = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
             if (user != null && viewModel.MangaDetails != null)
             {
-                // Kiểm tra trong bảng ReadingHistory xem có bản ghi đọc truyện này chưa
                 var readingHistory = await _mangaContext.ReadingHistory
                     .FirstOrDefaultAsync(rh => rh.UserID == user.Id && rh.IdManga == mangaDetails.Id);
 
-                // Nếu có lịch sử đọc, hiển thị nút "Đọc tiếp"
+
                 viewModel.HasReadingHistory = readingHistory != null;
 
                 // Kiểm tra xem manga có trong danh sách yêu thích của người dùng không
@@ -116,7 +114,7 @@ namespace Areas.Manga.C
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
             if (user == null)
-                return NotFound("Người dùng không tồn tại.");
+                return RedirectToAction("Login", "Account", new { area = "Identity" }); 
 
             // Đọc dữ liệu từ file JSON
             if (!System.IO.File.Exists(jsonFilePath))
