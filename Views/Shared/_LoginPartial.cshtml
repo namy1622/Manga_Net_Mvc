@@ -19,6 +19,11 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
+     var roles = await UserManager.GetRolesAsync(UserManager.GetUserAsync(User).Result);
+     if(roles.FirstOrDefault() == "Administrator"){
+             <partial name="_MenumanageAdmin" />
+     }
+
     <form asp-area="Identity" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm"
         class="navbar-right">
         <ul class="nav navbar-nav navbar-right">

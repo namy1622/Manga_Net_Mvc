@@ -5,6 +5,7 @@ namespace App.Areas.Identity.Models.UserViewModels
 {
         public class UserListModel
         {
+            public DateTime LockoutEnd {set; get;}
             public int totalUsers { get; set; }
             public int countPages { get; set; }
 

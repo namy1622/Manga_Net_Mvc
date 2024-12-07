@@ -37,7 +37,7 @@ public class HomeController : Controller
     // [Route("/api/home")]
     [HttpGet]
     // [Route("")]
-    public async Task<IActionResult> Index(int currentPage, int pagesize)
+    public async Task<IActionResult> Index(int currentPage, int pagesize, string searchName)
     {
 
         try
@@ -68,6 +68,17 @@ public class HomeController : Controller
                     var mangaList = apiResponse.Data.InfoMangaList;
                     _logger.LogInformation("===== Thành công lấy mangaList ====");
 
+                      // Tìm kiếm 
+                    if (!string.IsNullOrEmpty(searchName))
+                    {
+                        mangaList = mangaList
+                        .Where(s =>
+                            (s.Name != null && s.Name.ToUpper().Contains(searchName.ToUpper())) ||
+                            (s.Author != null && s.Author.ToUpper().Contains(searchName.ToUpper()))
+                        )
+                        .DistinctBy(s=> s.Name)
+                        .ToList();
+                    }
                     // Lấy danh sách og_image
                     //var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
                     _logger.LogInformation("===== Thành công lấy seoOnPage ====");

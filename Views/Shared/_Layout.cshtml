@@ -1,7 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Manga.Models
+<!DOCTYPE html>
 <html lang="en">
 
-
+﻿@{
+    var categoryList = ViewBag.CategoryList as List<CategoryListModel>;
+}
 
 <head>
     <meta charset="utf-8" />
@@ -31,7 +34,22 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class=" navbar-nav flex-grow-1 ">
 
-                        <li class=" nav-item">
+                         <li class="nav-item dropdown">
+                            <a class="dropdown-toggle nav-link text-white" asp-controller="CategoryList" role="button" id="navbarDropdown" aria-expanded="false">
+                                Thể loại
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-columns" aria-labelledby="navbarDropdown" style="width: auto;">
+                                @if (categoryList != null)
+                                {
+                                    @foreach (var item in categoryList)
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="CategoryList" asp-route-Slug="@item.Slug">@item.Name</a></li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+
+                        @* <li class=" nav-item">
                             <a class="nav-link text-white" asp-action="Index" asp-controller="User" asp-area="Identity">
                                 User</a>
                         </li>
@@ -50,20 +68,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="Manga" asp-controller="ReadingHistory"
                                 asp-action="Index">Lịch sử xem</a>
-                        </li>
+                        </li> *@
                     </ul>
 
 
-                    <div class=" d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
-
-                        <div class=" search input-group-prepend d-flex justify-content-center ">
-                            <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện">
-                            <button class="search-icon input-group-text">
-                                <img src="~/Icon/search.png">
-                            </button>
+                     <form asp-controller="Home" asp-action="Index" method="get">
+                        <div class="d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
+                            <div class="search input-group-prepend d-flex justify-content-center">
+                                <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện" name="searchName">
+                                <button class="search-icon input-group-text">
+                                    <img src="~/Icon/search.png" alt="Search">
+                                </button>
+                            </div>
                         </div>
-
-                    </div>
+                    </form>
 
                     <partial name="_LoginPartial"></partial>
 

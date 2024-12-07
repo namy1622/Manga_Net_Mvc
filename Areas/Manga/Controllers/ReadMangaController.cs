@@ -39,7 +39,7 @@ namespace Areas.Manga.Controllers
         // GET: ReadManga
         [HttpGet]
         // [Route("/read/{linkchap?}")]
-        public async Task<ActionResult> Read(string linkchap,  string comicId, string chapterName)
+        public async Task<ActionResult> Read(string linkchap, string comicId, string chapterName)
         {
             var viewModel_Read = new ReadManga_ViewModel();
 
@@ -47,8 +47,8 @@ namespace Areas.Manga.Controllers
             // var chapterDataJson = TempData.Peek("ChapterData") as string;
             // var id_manga = TempData.Peek("id_Manga") as string;
             // Lấy dữ liệu ChapterData từ Session
-var chapterDataJson = HttpContext.Session.GetString("ChapterData");
-var id_manga = HttpContext.Session.GetString("id_Manga");
+            var chapterDataJson = HttpContext.Session.GetString("ChapterData");
+            var id_manga = HttpContext.Session.GetString("id_Manga");
 
             if (!string.IsNullOrEmpty(chapterDataJson))
             {
@@ -69,13 +69,29 @@ var id_manga = HttpContext.Session.GetString("id_Manga");
                 // viewModel_Read.prev_chap = prev_chap;
                 // viewModel_Read.next_chap = next_chap;
 
-                        // Tìm Chapter trước và Chapter sau
-        var prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
-        var next_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) + 1);
+                // Tìm Chapter trước và Chapter sau
+                try
+                {
+                    var prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
+                    var prev_check = prev_chap.num_Chapter;
+                    var next_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) + 1);
+                    if(Convert.ToInt32(prev_check) ==  0){
+                        prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) +1);
+                    }
+                    if(Convert.ToInt32(next_chap.num_Chapter) == Convert.ToInt32(chapterData.LastOrDefault().num_Chapter)){
+                        next_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
+                    }
+                    
 
-        // Gán các đối tượng Chap vào ViewModel
-        viewModel_Read.prev_chap = prev_chap;
-        viewModel_Read.next_chap = next_chap;
+                    // Gán các đối tượng Chap vào ViewModel
+                    viewModel_Read.prev_chap = prev_chap;
+                    viewModel_Read.next_chap = next_chap;
+                }
+                catch(Exception e){
+                    return NotFound($"Loi he thong: {e.ToString}");
+                }
+
+
             }
 
             var readManga = await GetImagePageManga(linkchap);

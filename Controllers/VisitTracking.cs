@@ -17,9 +17,9 @@ namespace Manga.Controllers
         public async Task InvokeAsync(HttpContext context, MangaContext dbContext)
         {
             // Chỉ xử lý các yêu cầu không phải file tĩnh
-            if (context.Request.Path.StartsWithSegments("/api") ||
-                context.Request.Path.HasValue && !context.Request.Path.Value.Contains("."))
-            {
+            // if (context.Request.Path.StartsWithSegments("/api") ||
+            //     context.Request.Path.HasValue && !context.Request.Path.Value.Contains("."))
+            // {
                 if (context.User.Identity.IsAuthenticated)
                 {
                     var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -40,7 +40,7 @@ namespace Manga.Controllers
                         }
                         else
                         {
-                            userVisit.VisitCount++;
+                            userVisit.VisitCount = userVisit.VisitCount + 1;
                             userVisit.LastVisit = DateTime.UtcNow;
                         }
                         await dbContext.SaveChangesAsync();
@@ -48,7 +48,7 @@ namespace Manga.Controllers
                 }
 
                 await _next(context);
-            }
+            // }
         }
     }
 }

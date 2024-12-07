@@ -40,7 +40,7 @@ namespace App.Areas.Identity.Controllers
         //
         // GET: /Manage/Index
         [HttpGet]
-        public async Task<IActionResult> Index(ManageMessageId? message = null)
+        public async Task<IActionResult> Index(string? id ,ManageMessageId? message = null)
         {
             ViewData["StatusMessage"] =
                 message == ManageMessageId.ChangePasswordSuccess ? "Đã thay đổi mật khẩu."
@@ -51,24 +51,53 @@ namespace App.Areas.Identity.Controllers
                 : message == ManageMessageId.RemovePhoneSuccess ? "Đã bỏ số điện thoại."
                 : "";
 
-            var user = await GetCurrentUserAsync();
-            var model = new IndexViewModel
-            {
-                HasPassword = await _userManager.HasPasswordAsync(user),
-                PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
-                TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
-                Logins = await _userManager.GetLoginsAsync(user),
-                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
-                AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
-                profile = new EditExtraProfileModel()
+            if(id == null){
+                var user = await GetCurrentUserAsync();
+
+                var model = new IndexViewModel
                 {
-                   
-                    UserName = user.UserName,
-                    UserEmail = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                }
-            };
-            return View(model);
+                    HasPassword = await _userManager.HasPasswordAsync(user),
+                    PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
+                    // TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
+                    Logins = await _userManager.GetLoginsAsync(user),
+                    BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                    // AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
+
+                    
+
+                    profile = new EditExtraProfileModel()
+                    {
+                    
+                        UserName = user.UserName,
+                        UserEmail = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+
+                        
+                    }
+                };
+                return View(model);
+            }
+            else{
+                var user = await _userManager.FindByIdAsync(id);
+                var model = new IndexViewModel
+                {
+                    HasPassword = await _userManager.HasPasswordAsync(user),
+                    PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
+                    TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
+                    Logins = await _userManager.GetLoginsAsync(user),
+                    BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                    AuthenticatorKey = await _userManager.GetAuthenticatorKeyAsync(user),
+                    profile = new EditExtraProfileModel()
+                    {
+                    
+                        UserName = user.UserName,
+                        UserEmail = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                    }
+                };
+                return View(model);
+            }
+            
         }
         public enum ManageMessageId
         {
@@ -244,40 +273,24 @@ namespace App.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            // Generate the token and send it
-            var user = await GetCurrentUserAsync();
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
-            await _emailSender.SendSmsAsync(model.PhoneNumber, "Mã xác thực là: " + code);
-            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
-        }
-        //
-        // GET: /Manage/VerifyPhoneNumber
-        [HttpGet]
-        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
-        {
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(await GetCurrentUserAsync(), phoneNumber);
-            // Send an SMS to verify the phone number
-            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
-        }
+            // if (!ModelState.IsValid)
+            // {
+            //     return View(model);
+            // }
+            // // Generate the token and send it
+            // var user = await GetCurrentUserAsync();
+            // var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+            // await _emailSender.SendSmsAsync(model.PhoneNumber, "Mã xác thực là: " + code);
+            // return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
 
-        //
-        // POST: /Manage/VerifyPhoneNumber
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            // if (!ModelState.IsValid)
+            // {
+            //     return NotFound("loi");
+            // }
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                var result = await _userManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
+               var result = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -288,6 +301,7 @@ namespace App.Areas.Identity.Controllers
             ModelState.AddModelError(string.Empty, "Lỗi thêm số điện thoại");
             return View(model);
         }
+      
         //
         // GET: /Manage/RemovePhoneNumber
         [HttpPost]

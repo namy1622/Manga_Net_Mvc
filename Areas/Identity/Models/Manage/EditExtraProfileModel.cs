@@ -13,6 +13,8 @@ namespace App.Areas.Identity.Models.ManageViewModels
       [Display(Name = "Số điện thoại")]
       public string PhoneNumber { get; set; }
 
+      
+
       // [Display(Name = "Địa chỉ")]
       // [StringLength(400)]
       // public string HomeAdress { get; set; }

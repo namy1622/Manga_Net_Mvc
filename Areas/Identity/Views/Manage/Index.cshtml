@@ -1,6 +1,18 @@
 ﻿@model IndexViewModel
+
+@using Microsoft.AspNetCore.Identity
+@using Manga.Models
+
+@inject SignInManager<MangaUser> SignInManager
+@inject UserManager<MangaUser> UserManager
+
 @{
-    ViewData["Title"] = "Quản lý tài khoản của bạn";
+    ViewData["Title"] = "Quản lý tài khoản ";
+
+    var roles = await UserManager.GetRolesAsync(UserManager.GetUserAsync(User).Result);
+
+    bool checkAdmin = roles.FirstOrDefault() == "Administrator";
+
 }
 
 <h2 class="d-flex justify-content-center mt-3">@ViewData["Title"].</h2>
@@ -12,37 +24,51 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-4">Thông tin cơ bản:</dt>
-            <dd class="col-sm-6"> 
-                <dl class="row">
-                    <dt class = "col-sm-6">
-                        @Html.DisplayNameFor(m => Model.profile.UserName)
-                    </dt>   
-                    <dd class = "col-sm-6">
-                        @Html.DisplayFor(m => Model.profile.UserName)
-                    </dd>
-                </dl>
-                <dl class="row">
-                    <dt class = "col-sm-6">
-                        @Html.DisplayNameFor(m => Model.profile.UserEmail)
-                    </dt>   
-                    <dd class = "col-sm-6">
-                        @Html.DisplayFor(m => Model.profile.UserEmail)
-                    </dd>
-                </dl>
-                <dl class="row">
-                    <dt class = "col-sm-6">
-                        @Html.DisplayNameFor(m => Model.profile.PhoneNumber)
-                    </dt>   
-                    <dd class = "col-sm-6">
-                        @Html.DisplayFor(m => Model.profile.PhoneNumber)
-                    </dd>
-                </dl>
-                
-                <a asp-action="EditProfile" class="btn btn-primary btn-sm">Sửa</a>
-    
-            </dd>
+        <dd class="col-sm-6">
+            <dl class="row">
+                <dt class="col-sm-6">
+                    @Html.DisplayNameFor(m => Model.profile.UserName)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(m => Model.profile.UserName)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-sm-6">
+                    @Html.DisplayNameFor(m => Model.profile.UserEmail)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(m => Model.profile.UserEmail)
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="col-sm-6">
+                    @Html.DisplayNameFor(m => Model.profile.PhoneNumber)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(m => Model.profile.PhoneNumber)
+                </dd>
+            </dl>
+
+            @* <a asp-action="EditProfile" class="btn btn-primary btn-sm">Sửa</a> *@
+
+        </dd>
         <hr>
-        <dt class="col-sm-4">Mật khẩu:</dt>
+
+        @if (checkAdmin)
+        {
+           
+            <hr>
+            <dt class="col-sm-4">Liên kết tài khoản ngoài:</dt>
+            <dd class="col-sm-6">
+                Có @Model.Logins.Count liên kết. 
+            </dd>
+            <hr>
+           
+        }
+        else
+        {
+            <dt class="col-sm-4">Mật khẩu:</dt>
             <dd class="col-sm-6">
                 @if (Model.HasPassword)
                 {
@@ -54,31 +80,34 @@
                 }
             </dd>
             <hr>
-        <dt class = "col-sm-4">Liên kết tài khoản ngoài:</dt>
-            <dd class = "col-sm-6">
-                Có @Model.Logins.Count liên kết. <a asp-controller="Manage" asp-action="ManageLogins">Quản lý liên kết ngoài</a>
+            <dt class="col-sm-4">Liên kết tài khoản ngoài:</dt>
+            <dd class="col-sm-6">
+                Có @Model.Logins.Count liên kết. <a asp-controller="Manage" asp-action="ManageLogins">Quản lý liên kết
+                    ngoài</a>
             </dd>
-<hr>
-        <dt class="col-sm-4">Số điện thoại:</dt>
-            <dd class = "col-sm-6">
+            <hr>
+            <dt class="col-sm-4">Số điện thoại:</dt>
+            <dd class="col-sm-6">
                 @* <p>
                     Số điện thoại dùng để xác thực hai yêu tố
                 </p> *@
                 @(Model.PhoneNumber ?? "Trống")
-                    @if (Model.PhoneNumber != null)
-                    {
-                        <text>:</text>
-                        <text>&nbsp;&nbsp;<a asp-controller="Manage" asp-action="AddPhoneNumber">Thay đổi</a>&nbsp;&nbsp;</text>
-                        <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post" role="form">
-                            <button type="submit" class="btn btn-danger btn-sm">Loại bỏ số điện thoại</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <text>&nbsp;&nbsp;<a asp-controller="Manage" asp-action="AddPhoneNumber">Thêm số điện thoại</a></text>
-                    }
+                @if (Model.PhoneNumber != null)
+                {
+                    <text>:</text>
+                    <text>&nbsp;&nbsp;<a asp-controller="Manage" asp-action="AddPhoneNumber">Thay đổi</a>&nbsp;&nbsp;</text>
+                    <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post" role="form">
+                        <button type="submit" class="btn btn-danger btn-sm">Loại bỏ số điện thoại</button>
+                    </form>
+                }
+                else
+                {
+                    <text>&nbsp;&nbsp;<a asp-controller="Manage" asp-action="AddPhoneNumber">Thêm số điện thoại</a></text>
+                }
             </dd>
-<hr>
+        }
+
+        <hr>
         @* <dt class="col-sm-4">Xác thực hai yếu tố:</dt>
             <dd class = "col-sm-6">
                 <!--<p>

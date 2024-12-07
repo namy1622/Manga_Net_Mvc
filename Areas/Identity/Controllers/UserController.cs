@@ -51,6 +51,8 @@ namespace App.Areas.Identity.Controllers
         [TempData]
         public string StatusMessage { get; set; }
 
+        [TempData]
+        public string StatusMessage_Lockout { get; set; }
         //
         // GET: /ManageUser/Index
         [HttpGet]
@@ -109,8 +111,10 @@ namespace App.Areas.Identity.Controllers
             model.users = await qr2.ToListAsync();
             
             foreach (var user in model.users)
-            {
+            {   
+               
                 var roles = await _userManager.GetRolesAsync(user);
+
                 user.RoleNames = string.Join(",", roles);
 
                  var userLogins = await _context.UserLogins
@@ -118,6 +122,9 @@ namespace App.Areas.Identity.Controllers
                                        .Select(ul => ul.LoginProvider)
                                        .ToListAsync();
                   user.ProviderLogin = string.Join(",", userLogins);
+
+                   var lockout = await _userManager.GetLockoutEndDateAsync(user);
+                user.LockoutEnd = lockout;
 
             } 
 
@@ -260,6 +267,54 @@ namespace App.Areas.Identity.Controllers
         }        
 
 
+
+        [HttpPost]
+        public async Task<IActionResult> LockAccount(string id){
+            if(string.IsNullOrEmpty(id))
+            {
+                return NotFound("Id bị trống!!!");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if(user == null)
+            {
+                return NotFound("Không tìm thấy User!!!");
+            }
+                // nếu đang bi khóa (!=null) và time end khóa > time current (chưa hết hạn khóa)
+            if(user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.Now)
+            {
+                user.LockoutEnd = null ; // null: khong bị khóa
+                StatusMessage_Lockout = $"Tài khoản {user.UserName} đã được mở khóa";
+            }
+            else{
+                 // Khóa tài khoản trong 30 ngày
+                user.LockoutEnd = DateTimeOffset.Now.AddDays(30);
+                StatusMessage_Lockout = $"Tài khoản {user.UserName} đã bị khóa.";
+            }
+            var result = await _userManager.UpdateAsync(user);
+             if (!result.Succeeded)
+                {
+                    TempData["Error"] = "Cập nhật tài khoản không thành công.";
+                }
+
+                return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAccount(string id){
+            
+            var user = await _userManager.FindByIdAsync(id);
+
+            var deleteUser = await _userManager.DeleteAsync(user);
+
+            if(deleteUser.Succeeded){
+                StatusMessage_Lockout = "Xoa thanh cong";
+                return RedirectToAction("Index");
+            }
+            StatusMessage_Lockout = "Xoa that bai.";
+            return RedirectToAction("Index");
+        }
 //         [HttpGet("{userid}")]
 //         public async Task<ActionResult> AddClaimAsync(string userid)
 //         {
