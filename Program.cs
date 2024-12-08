@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Manga.Data;
 using Manga.Controllers;
 
+using BTL_WebManga.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,11 @@ builder.Services.AddHttpClient();
 //--
 builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<PreloadService>();
+
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<CategoryService>();
+
 
 
 //--- Dang Ki Lop Nhu 1 Dich Vu -------------------------------

@@ -1,10 +1,11 @@
-﻿@using Manga.Models
+﻿@using Manga.Home.Models
+@using Manga.Models
 <!DOCTYPE html>
 <html lang="en">
 
-﻿@{
-    var categoryList = ViewBag.CategoryList as List<CategoryListModel>;
-}
+@* ﻿@{
+    var categoryList = ViewBag.CategoryList as List<BTL_WebManga.Areas.Manga.Models.CategoryModel>;
+} *@
 
 <head>
     <meta charset="utf-8" />
@@ -35,40 +36,23 @@
                     <ul class=" navbar-nav flex-grow-1 ">
 
                          <li class="nav-item dropdown">
-                            <a class=" nav-link text-white" data-bs-toggle="dropdown"  role="button" id="navbarDropdown" aria-expanded="false">
+                            <a class="dropdown-toggle nav-link text-white" asp-area="Manga" asp-controller="Category" asp-action="Index" role="button" id="navbarDropdown" aria-expanded="false">
                                 Thể loại
+
+                                @* @categoryList.Count *@
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-columns" aria-labelledby="navbarDropdown" style="width: auto;">
+                            @* <ul class="dropdown-menu dropdown-menu-columns" aria-labelledby="navbarDropdown" style="width: auto;">
                                 @if (categoryList != null)
                                 {
                                     @foreach (var item in categoryList)
                                     {
-                                        <li><a class="dropdown-item" asp-controller="CategoryList" asp-route-Slug="@item.Slug">@item.Name</a></li>
+                                        <li><a class="dropdown-item" asp-area="Manga" asp-controller="Category" asp-action="Index" asp-route-Slug="@item.SlugCategory">@item.Name</a></li>
                                     }
                                 }
-                            </ul>
+                            </ul> *@
                         </li>
 
-                        @* <li class=" nav-item">
-                            <a class="nav-link text-white" asp-action="Index" asp-controller="User" asp-area="Identity">
-                                User</a>
-                        </li>
-                        <li class=" nav-item">
-                            <a class="nav-link text-white" asp-action="Index" asp-controller="Role" asp-area="Identity">
-                                Role</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="" asp-action="">Item 1</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="Manga" asp-controller="FavouriteComic"
-                                asp-action="Index">Danh sách yêu thích</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="Manga" asp-controller="ReadingHistory"
-                                asp-action="Index">Lịch sử xem</a>
-                        </li> *@
+                  
                     </ul>
 
 

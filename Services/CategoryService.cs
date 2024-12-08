@@ -1,19 +1,19 @@
 using System.Text.Json;
-using Manga.Models;
+using BTL_WebManga.Areas.Manga.Models;
 
-namespace Manga.Services
+namespace BTL_WebManga.Services
 {
     public class CategoryService
     {
         private readonly ILogger<CategoryService> _logger;
-        private readonly string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "Json", "Category.json");
+        private readonly string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "API", "Category.json");
 
         public CategoryService(ILogger<CategoryService> logger)
         {
             _logger = logger;
         }
 
-        public List<CategoryListModel> CategoryList()
+        public List<CategoryModel> GetCategoryList()
         {
             try
             {
@@ -27,19 +27,16 @@ namespace Manga.Services
 
                     if (apiResponse?.Data?.CategoryItems != null)
                     {
-
-                        // TempData["CategoryList"] = apiResponse.Data.CategoryItems;
                         return apiResponse.Data.CategoryItems;
                     }
                 }
                 _logger.LogWarning("Không có dữ liệu trong JSON.");
-               
-                return new List<CategoryListModel>();
+                return new List<CategoryModel>();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Lỗi khi xử lý JSON: {ex.Message}");
-                return new List<CategoryListModel>();
+                return new List<CategoryModel>();
             }
         }
     }

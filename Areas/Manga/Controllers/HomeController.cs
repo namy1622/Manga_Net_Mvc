@@ -1,9 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using BTL_WebManga.Models;
+using Manga.Models;
 using Manga.Home.Models;
 using System.Text.Json;
 using Manga.Models;
+
+using System.Net.Http;
+using BTL_WebManga.Models;
+using BTL_WebManga.Services;
 
 namespace Areas.Manga.Controllers;
 
@@ -16,13 +20,19 @@ public class HomeController : Controller
     private readonly HttpClient httpClient;
     private readonly ILogger<HomeController> _logger;
 
+    private readonly CategoryService _categoryService;
+
+  
+
     // private readonly string api_Home = "https://otruyenapi.com/v1/api/home";
     private readonly string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "API", "Home.json");
 
-    public HomeController(HttpClient _httpClient, ILogger<HomeController> logger)
+    public HomeController(HttpClient _httpClient, ILogger<HomeController> logger, CategoryService categoryService)
     {
         httpClient = _httpClient;
         _logger = logger;
+
+         _categoryService = categoryService;
     }
 
     //
@@ -45,6 +55,10 @@ public class HomeController : Controller
             _logger.LogInformation("===== Goi API 1 ====");
 
             // var response = await httpClient.GetAsync(api_Home);
+             
+                   var categoryList = _categoryService.GetCategoryList();
+                   
+            ViewBag.CategoryList = categoryList;
 
             // Đọc dữ liệu từ tệp JSON
             if (System.IO.File.Exists(jsonFilePath))
@@ -79,6 +93,14 @@ public class HomeController : Controller
                         .DistinctBy(s=> s.Name)
                         .ToList();
                     }
+
+                    // lấy truyện nổi bật
+                    var featuredManga = mangaList
+                                        .OrderBy(m => Guid.NewGuid())
+                                        .Take(5)
+                                        .ToList();
+                    ViewBag.featuredManga = featuredManga;
+
                     // Lấy danh sách og_image
                     //var ogImages = apiResponse.Data.SeoOnPage?.OgImages;
                     _logger.LogInformation("===== Thành công lấy seoOnPage ====");

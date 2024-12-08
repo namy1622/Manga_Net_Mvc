@@ -1,14 +1,16 @@
-﻿
+﻿@using Microsoft.IdentityModel.Tokens
+
 @{
     ViewData["Title"] = "Trang chủ";
+     @* var mangaList = ViewBag.MangasInPage as List<BTL_WebManga.Areas.Manga.Models.ComicModel>; *@
 }
 
 @{
     var imgUrl = "https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
 
-    @* var mangaList = ViewBag.MangaList as List<Manga.Home.Models.InfoMangaModels>; *@
-    var mangaList = ViewBag.MangasInPage as List<Manga.Home.Models.InfoMangaModels>;
-
+    var mangaList = ViewBag.MangaList as List<Manga.Home.Models.InfoMangaModels>;
+    @* var mangaList = ViewBag.MangasInPage as List<Manga.Home.Models.InfoMangaModels>; *@
+    var featured = ViewBag.featuredManga as List<Manga.Home.Models.InfoMangaModels>;
     @* var ogImages = ViewBag.OgImages as List<Manga.Home.Models.SeoOnPage>; *@
 
 }
@@ -19,6 +21,7 @@
 
     <div style="background: #21A691; margin-top: -50px;" class="col-md-2 ">
         <div style="margin-top: 100px">
+    using Microsoft.IdentityModel.Tokens;
             Phần lọc phim, chọn thể loại truyện
         </div>
     </div>
@@ -30,7 +33,7 @@
         <div class="container mt-4  pe-1 ps-1 " style="height: 600px; border:none ;">
             <!-- Tiêu đề -->
             <div class=" mb-1 mt-2">
-                <h2 class="w-600 ">Truyện Nổi Bật</h2>
+                <h2 class="w-600 ">Truyện Nổi Bật @featured.Count</h2>
 
             </div>
 
@@ -40,29 +43,30 @@
 
                 <div class="carousel-inner custom-border custom-shadow"
                     style="height: 544px; position: relative; border-radius: 15px;">
-                    <!-- Truyện 1 -->
-                    <div class="carousel-item active">
-                        <div class="d-flex justify-content-center align-items-center h-100">
-                            <img src="https://image1.ddntcthcd.com/nettruyen/thumb/chuyen-sinh-vao-the-gioi-vo-lam.jpg"
-                                class="img-fluid" style="height: 900px; width: 75%; " alt="Truyện 1">
-                        </div>
-                    </div>
 
-                    <!-- Truyện 2 -->
-                    <div class="carousel-item">
+                    @if (featured == null || !featured.Any())
+                    {
                         <div class="d-flex justify-content-center align-items-center h-100">
-                            <img src="https://otruyenapi.com/uploads/comics/vuong-quoc-huyet-mach-thumb.jpg"
-                                class="img-fluid" style="height: 900px; width: 75%; " alt="Truyện 2">
+                            <img src="https://via.placeholder.com/900" 
+                                class="img-fluid" style="height: 544px; width: 75%;" alt="Truyện không có">
                         </div>
-                    </div>
-
-                    <!-- Truyện 3 -->
-                    <div class="carousel-item">
-                        <div class="d-flex justify-content-center align-items-center h-100">
-                            <img src="https://otruyenapi.com/uploads/comics/van-co-toi-cuong-tong-thumb.jpg"
-                                class="img-fluid" style="height: 900px; width: 75%; " alt="Truyện 3">
-                        </div>
-                    </div>
+                    }
+                    else
+                    {
+                        int index = 0; // Biến đếm để xác định slide đầu tiên
+                        foreach (var m in featured)
+                        {
+                            var img = $"https://otruyenapi.com/uploads/comics/{m.Thumb_url}";
+                            <div class="carousel-item @(index == 0 ? "active" : "")">
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <img src="@img" 
+                                        class="img-fluid" style="height: 544px; width: 75%;" alt="@m.Name">
+                                </div>
+                            </div>
+                            index++;
+                        }
+                    }
+                    
                 </div>
 
 

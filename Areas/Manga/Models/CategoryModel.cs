@@ -1,24 +1,24 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Manga.Models
+namespace BTL_WebManga.Areas.Manga.Models
 {
-    public class CategoryListModel
+    public class CategoryModel
     {
         [JsonPropertyName("_id")]
         public string IdCatecogy { get; set; }
 
         [JsonPropertyName("slug")]
-        public string Slug { get; set; }
+        public string SlugCategory { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
-        
+
     }
 
     public class Data_Category
     {
         [JsonPropertyName("items")]
-        public List<CategoryListModel> CategoryItems { get; set; }
+        public List<CategoryModel> CategoryItems { get; set; }
     }
 
     public class APIResponse_Category
@@ -26,3 +26,4 @@ namespace Manga.Models
         public Data_Category Data { get; set; }
     }
 }
+
