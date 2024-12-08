@@ -13,7 +13,7 @@ namespace BTL_WebManga.Services
             _logger = logger;
         }
 
-        public List<CategoryListModel> GetCategoryList()
+        public List<CategoryModel> GetCategoryList()
         {
             try
             {
@@ -31,12 +31,12 @@ namespace BTL_WebManga.Services
                     }
                 }
                 _logger.LogWarning("Không có dữ liệu trong JSON.");
-                return new List<CategoryListModel>();
+                return new List<CategoryModel>();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Lỗi khi xử lý JSON: {ex.Message}");
-                return new List<CategoryListModel>();
+                return new List<CategoryModel>();
             }
         }
     }

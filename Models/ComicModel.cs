@@ -21,7 +21,7 @@ namespace BTL_WebManga.Models
         public DateTime Date { get; set; }
 
         [JsonPropertyName("category")]
-        public List<CategoryListModel> CategoryList { get; set; }
+        public List<CategoryModel> CategoryList { get; set; }
     }
 
     public class Data_Comic
