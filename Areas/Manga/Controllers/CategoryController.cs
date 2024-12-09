@@ -46,140 +46,76 @@ namespace BTL_WebManga.Areas.Manga.Controllers
                 {
                     var mangaList = apiResponse.Data.InfoMangaList;
 
-
-                    if (selectedCategories == null || !selectedCategories.Any())
-                    {
-                        ViewBag.MangaList = mangaList;
-
-                        // Pagination
-                        int totalManga = mangaList.Count();
-                        if (pagesize <= 0) pagesize = 30;
-                        int countPages = (int)Math.Ceiling((double)totalManga / pagesize);
-
-                        if (currentPage > countPages) currentPage = countPages;
-                        if (currentPage < 1) currentPage = 1;
-
-                        var pagingModel = new PagingModel()
-                        {
-                            countpages = countPages,
-                            currentpage = currentPage,
-                            generateUrl = (pageNumber) => Url.Action("Index", new
-                            {
-                                currentPage = pageNumber,
-                                pagesize
-                            })
-                        };
-
-                        ViewBag.pagingModel = pagingModel;
-                        ViewBag.totalManga = totalManga;
-                        ViewBag.postIndex = (currentPage - 1) * pagesize;
-
-                        var MangasInPage = mangaList
-                                                .Skip((currentPage - 1) * pagesize)
-                                                .Take(pagesize)
-                                                .ToList();
-
-                        ViewBag.MangasInPage = MangasInPage;
-
-                        return View();
-                    }
-
                     if (!string.IsNullOrEmpty(slug))
                     {
-                        var comicsByCategory = mangaList.Where(ci => ci.CategoryList.Any(c => c.SlugCategory == slug)).ToList();
-                        if (!comicsByCategory.Any())
+                        mangaList = mangaList.Where(ci => ci.CategoryList.Any(c => c.SlugCategory == slug)).ToList();
+                        if (!Enumerable.Any<ComicModel>(mangaList))
                         {
                             ViewBag.MangaList = null;
-                            return View();
+                            return base.View();
                         }
 
-                        ViewBag.MangaList = comicsByCategory;
-
-                        int totalManga = comicsByCategory.Count();
-                        _logger.LogInformation($"===== {totalManga} ====");
-
-                        if (pagesize <= 0) pagesize = 30;
-                        int countPages = (int)Math.Ceiling((double)totalManga / pagesize);
-
-                        if (currentPage > countPages) currentPage = countPages;
-                        if (currentPage < 1) currentPage = 1;
-
-                        var pagingModel = new PagingModel()
+                        if (!selectedCategories.Contains(slug))
                         {
-                            countpages = countPages,
-                            currentpage = currentPage,
-                            generateUrl = (pageNumber) => Url.Action("Index", new
-                            {
-                                currentPage = pageNumber,
-                                pagesize
-                            })
-                        };
+                            selectedCategories.Add(slug);
+                        }
 
-                        ViewBag.pagingModel = pagingModel;
-                        ViewBag.totalManga = totalManga;
-                        ViewBag.postIndex = (currentPage - 1) * pagesize;
-
-                        var MangasInPage = comicsByCategory
-                                                .Skip((currentPage - 1) * pagesize)
-                                                .Take(pagesize)
-                                                .ToList();
-
-                        ViewBag.MangasInPage = MangasInPage;
-
-                        return View();
+                        ViewBag.MangaList = mangaList;
                     }
                     else if (selectedCategories != null && selectedCategories.Any())
                     {
-                        var filteredComics = mangaList.Where(manga => manga.CategoryList.Any(c => selectedCategories.Contains(c.SlugCategory))).ToList();
-                        if (!filteredComics.Any())
+                        mangaList = mangaList.Where(manga => manga.CategoryList.Any(c => selectedCategories.Contains(c.SlugCategory))).ToList();
+                        if (!Enumerable.Any<ComicModel>(mangaList))
                         {
                             ViewBag.MangaList = null;
-                            return View();
+                            return base.View();
                         }
 
-                        ViewBag.MangaList = filteredComics;
+                        ViewBag.MangaList = mangaList;
 
-                        int totalManga = filteredComics.Count();
-                        _logger.LogInformation($"===== {totalManga} ====");
-
-                        if (pagesize <= 0) pagesize = 30;
-                        int countPages = (int)Math.Ceiling((double)totalManga / pagesize);
-
-                        if (currentPage > countPages) currentPage = countPages;
-                        if (currentPage < 1) currentPage = 1;
-
-                        var pagingModel = new PagingModel()
-                        {
-                            countpages = countPages,
-                            currentpage = currentPage,
-                            generateUrl = (pageNumber) => Url.Action("Index", new
-                            {
-                                currentPage = pageNumber,
-                                pagesize
-                            })
-                        };
-
-                        ViewBag.pagingModel = pagingModel;
-                        ViewBag.totalManga = totalManga;
-                        ViewBag.postIndex = (currentPage - 1) * pagesize;
-
-                        var MangasInPage = filteredComics
-                                                .Skip((currentPage - 1) * pagesize)
-                                                .Take(pagesize)
-                                                .ToList();
-
-                        ViewBag.MangasInPage = MangasInPage;
-
-                        return View();
                     }
+                    else if (selectedCategories == null || !selectedCategories.Any() || slug == null)
+                    {
+                        ViewBag.MangaList = mangaList;
+
+                    }
+                    //Phan trang
+                    int totalManga = mangaList.Count();
+                    _logger.LogInformation($"===== {totalManga} ====");
+
+                    if (pagesize <= 0) pagesize = 30;
+                    int countPages = (int)Math.Ceiling((double)totalManga / pagesize);
+
+                    if (currentPage > countPages) currentPage = countPages;
+                    if (currentPage < 1) currentPage = 1;
+
+                    var pagingModel = new PagingModel()
+                    {
+                        countpages = countPages,
+                        currentpage = currentPage,
+                        generateUrl = (pageNumber) => Url.Action("Index", new
+                        {
+                            currentPage = pageNumber,
+                            pagesize
+                        })
+                    };
+
+                    ViewBag.pagingModel = pagingModel;
+                    ViewBag.totalManga = totalManga;
+                    ViewBag.postIndex = (currentPage - 1) * pagesize;
+
+                    var MangasInPage = mangaList
+                                            .Skip((currentPage - 1) * pagesize)
+                                            .Take(pagesize)
+        .ToList();
+
+                    ViewBag.MangasInPage = MangasInPage;
                 }
 
             }
             ViewBag.MangaList = null;
             return View();
         }
-
-
 
     }
 

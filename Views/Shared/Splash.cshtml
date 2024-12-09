@@ -9,13 +9,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
+     <link rel="stylesheet" href="~/css/css_custom/splash.css" asp-append-version="true">
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffff;
+            background-color: #4d6050;
             font-family: Arial, sans-serif;
             margin: 0;
 
@@ -37,7 +38,7 @@
     <script>
         // Chuyển hướng sau 3 giây
         setTimeout(function () {
-            window.location.href = "Manga/Home/Index"; // Thay đổi URL này thành trang chính của bạn
+            window.location.href = "Manga/Home/Index"; 
         }, 5000);
     </script>
 
@@ -62,12 +63,19 @@
 
 </head>
 
-<body >
-    <div class="splash-container"  >
+<body style="">
+    @* <div class="splash-container"  >
         <img src="~/Img/run.gif" alt="" >
 
 
-    </div>
+    </div> *@
+
+    <div class="loader_splash">
+  <div class="box1"></div>
+  <div class="box2"></div>
+  <div class="box3"></div>
+</div>
+
 </body>
 
 </html>

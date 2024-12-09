@@ -50,6 +50,11 @@ namespace Manga.Home.Models
         {
             throw new NotImplementedException();
         }
+
+        internal ChapterData Where(Func<object, bool> value)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class Data_Details{

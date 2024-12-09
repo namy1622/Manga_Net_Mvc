@@ -5,28 +5,52 @@
     var selectedCategories = ViewBag.SelectedCategories as List<string>;
 }
 
-
+<div class="row">
+<div class="col-md-1"></div>
 <!-- Thể Loại -->
-<div class="container-fluid col-md-10 mt-4" >
+<div class=" col-md-10 mt-4 " >
     <!-- Carousel -->
     <div style="margin-top: -50px;" class="col-11">
         <div style="margin-top: 100px;">
-            <h2 class="text-center mb-4">Lọc Thể Loại</h2>
 
-@if (categoryList != null)
-{
-                <form method="get" asp-action="Index" asp-controller="Category">
-                    <div class="row g-2" style="border: 3px solid #ccc; display: flex; flex-wrap: wrap; justify-content: flex-start;">
+            <div class="card_cus_ mb-4">
+                <div class="content_cus_">
+                    <div class="back_cus_">
+                    <div class="back-content_cus_ ">
+                        <h2 class="text-center ">Lọc Thể Loại</h2>
+                    </div>
+                    </div>
+                </div>
+                </div>
+           
+
+            @if (categoryList != null)
+            {
+                <form method="get" asp-action="Index" asp-controller="Category" >
+                    <div class="row g-2 " style="border: 3px solid #ccc; display: flex; flex-wrap: wrap; justify-content: flex-start;">
             @foreach (var item in categoryList)
             {
-                            <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1">
-                                <div class="form-check text-center" style="width: 100%;">
-                                    <input type="checkbox" class="form-check-input" name="selectedCategories" value="@item.SlugCategory" id="@item.Name" style="border-radius: 3px;"
-                        @if (selectedCategories != null && selectedCategories.Contains(item.SlugCategory))
-                        {
-                            <text>checked</text>
-                        } />
-                                    <label class="form-check-label" for="@item.Name" style="font-size: 16px;">@item.Name</label>
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+                                <div class=" text-center checkbox-wrapper d-flex" style="width: 100%;">
+                                    <input type="checkbox" class="" name="selectedCategories" value="@item.SlugCategory" id="@item.Name" 
+                                        @if (selectedCategories != null && selectedCategories.Contains(item.SlugCategory))
+                                        {
+                                            <text>checked</text>
+                                        } 
+                                    />
+                                    <label class="terms-label" for="@item.Name">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
+                                        <mask fill="white" id="path-1-inside-1_476_5-37">
+                                            <rect height="200" width="200"></rect>
+                                        </mask>
+                                        <rect mask="url(#path-1-inside-1_476_5-37)" stroke-width="40" class="checkbox-box" height="200" width="200"></rect>
+                                        <path stroke-width="15" d="M52 111.018L76.9867 136L149 64" class="checkbox-tick"></path>
+                                        </svg>
+                                    
+                                       <span class="label-text" for="@item.Name" >@item.Name</span>
+                                    </label>
+                                     
+                                    @* <label class="form-check-label" for="@item.Name" style="font-size: 16px;">@item.Name</label> *@
                                 </div>
                             </div>
             }
@@ -36,6 +60,8 @@
                     </div>
                 </form>
 }
+
+            
         </div>
     </div>
 
@@ -52,7 +78,7 @@
     foreach (var manga in mangaList)
     {
         var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
-                    <div class="col">
+        <div class="col">
                         <a class="card h-100 border-0 shadow-sm" asp-controller="DetailsManga" asp-action="Index">
                             <img src="@urlImage" class="card-img-top rounded" alt="@manga.Name" style="height: 100%; object-fit: cover;">
                             <div class="card-body p-2 text-center d-flex flex-column justify-content-between">
@@ -76,5 +102,6 @@ else
         <partial name="_Paging" model="@ViewBag.pagingModel" />
     </div>
 </div>
-
-
+<div class="col-md-1"></div>
+    
+</div>

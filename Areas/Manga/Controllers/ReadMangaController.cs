@@ -39,16 +39,37 @@ namespace Areas.Manga.Controllers
         // GET: ReadManga
         [HttpGet]
         // [Route("/read/{linkchap?}")]
-        public async Task<ActionResult> Read(string linkchap, string comicId, string chapterName)
+        public async Task<ActionResult> Read(string linkchap, string comicId, string chapterName , string mangaId = null)
         {
             var viewModel_Read = new ReadManga_ViewModel();
 
-            // Lấy dữ liệu ChapterData từ TempData
-            // var chapterDataJson = TempData.Peek("ChapterData") as string;
-            // var id_manga = TempData.Peek("id_Manga") as string;
-            // Lấy dữ liệu ChapterData từ Session
+            // //////////////////////
+            // Nếu linkchap rỗng và có mangaId, thực hiện chức năng "Đọc tiếp"
+            if (string.IsNullOrEmpty(linkchap) && !string.IsNullOrEmpty(mangaId))
+            {
+                var userName_continue = User.Identity.Name;
+                var user_continue = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName_continue);
+
+                if (user_continue == null)
+                    return Ok("Bạn phải đăng nhập mới dùng được chức năng này");
+
+                var mangaHistory = await _mangaContext.ReadingHistory
+                    .FirstOrDefaultAsync(m => m.UserID == user_continue.Id && m.IdManga == mangaId);
+
+                if (mangaHistory == null)
+                    return NotFound("Không tìm thấy lịch sử đọc cho manga này");
+
+                linkchap = mangaHistory.LinkChapter;
+                chapterName = mangaHistory.NameChapter;
+                comicId = mangaHistory.IdManga;
+            }
+
+
+            // =======================
+
             var chapterDataJson = HttpContext.Session.GetString("ChapterData");
             var id_manga = HttpContext.Session.GetString("id_Manga");
+
 
             if (!string.IsNullOrEmpty(chapterDataJson))
             {
@@ -56,41 +77,45 @@ namespace Areas.Manga.Controllers
                 // Gán dữ liệu ChapterData vào ViewModel
                 viewModel_Read.ChapterData = chapterData;
 
-                // var prev_chap = chapterData.Where(c => int.Parse(c.num_Chapter) == int.Parse(numChap) -1).FirstOrDefault().ToJson();
-                // var next_chap = chapterData.Where(c => int.Parse(c.num_Chapter) == int.Parse(numChap) +1).FirstOrDefault().ToJson();
-                // var prev_chap = Newtonsoft.Json.JsonConvert.SerializeObject(
-                //     chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(numChap) - 1)
-                // );
-                // var next_chap = Newtonsoft.Json.JsonConvert.SerializeObject(
-                //     chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(numChap) + 1)
-                // );
 
-
-                // viewModel_Read.prev_chap = prev_chap;
-                // viewModel_Read.next_chap = next_chap;
-
-                // Tìm Chapter trước và Chapter sau
                 try
                 {
-                    var prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
-                    var prev_check = prev_chap.num_Chapter;
-                    var next_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) + 1);
-                    if(Convert.ToInt32(prev_check) ==  0){
-                        prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) +1);
-                    }
-                    if(Convert.ToInt32(next_chap.num_Chapter) == Convert.ToInt32(chapterData.LastOrDefault().num_Chapter)){
-                        next_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
-                    }
-                    
+                    var sortedChapters = chapterData
+                                   .Select(c => new { Chapter = c, ChapterNumber = double.Parse(c.num_Chapter) })
+                                   .OrderBy(c => c.ChapterNumber)
+                                   .ToList();
 
-                    // Gán các đối tượng Chap vào ViewModel
-                    viewModel_Read.prev_chap = prev_chap;
-                    viewModel_Read.next_chap = next_chap;
+                    var testChap = chapterName;
+                    var next_chap = chapterData.LastOrDefault();
+                    var prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName));
+                    if (chapterName != chapterData.FirstOrDefault().num_Chapter.ToString())
+                    {
+                        prev_chap = chapterData.FirstOrDefault(c => int.Parse(c.num_Chapter) == int.Parse(chapterName) - 1);
+                        var prev_check = prev_chap.num_Chapter;
+
+                        viewModel_Read.prev_chap = prev_chap;
+                    }
+
+                    else
+                    {
+                        viewModel_Read.prev_chap = prev_chap;
+                    }
+
+                    if (chapterName != chapterData.LastOrDefault().num_Chapter.ToString())
+                    {
+                        next_chap = chapterData.FirstOrDefault(c => double.Parse(c.num_Chapter) == double.Parse(chapterName) + 1);
+                        viewModel_Read.next_chap = next_chap;
+                    }
+                    else
+                    {
+                        viewModel_Read.next_chap = next_chap;
+                    }
+
                 }
-                catch(Exception e){
+                catch (Exception e)
+                {
                     return NotFound($"Loi he thong: {e.ToString}");
                 }
-
 
             }
 
@@ -110,6 +135,7 @@ namespace Areas.Manga.Controllers
             viewModel_Read.Chapter_path = path;
             viewModel_Read.chapter_Images = imageChap;
             viewModel_Read.id_manga = id_manga;
+
             var userName = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
@@ -147,30 +173,8 @@ namespace Areas.Manga.Controllers
         }
 
         //Get
-        public async Task<IActionResult> ResumeReading(string mangaId)
-        {
-            var viewModel_Read = new ReadManga_ViewModel();
-
-            var userName = User.Identity.Name;
-            var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
-
-            if (user == null)
-                return Ok("Bạn phải đăng nhập mới dùng được chức năng này");
-
-            var mangaHistory = await _mangaContext.ReadingHistory
-                .FirstOrDefaultAsync(m => m.UserID == user.Id && m.IdManga == mangaId);
-
-            var readManga = await GetImagePageManga(mangaHistory.LinkChapter);
-
-            var imageChap = readManga.Chapter_Image;
-
-            var path = readManga.Chapter_Path;
-
-            viewModel_Read.data_Read = readManga;
-            viewModel_Read.Chapter_path = path;
-            viewModel_Read.chapter_Images = imageChap;
-            return View(viewModel_Read);
-        }
+       
+       
 
         public async Task<Read_Items> GetImagePageManga(string linkchap)
         {

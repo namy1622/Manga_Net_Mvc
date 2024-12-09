@@ -22,7 +22,7 @@ public class HomeController : Controller
 
     private readonly CategoryService _categoryService;
 
-  
+
 
     // private readonly string api_Home = "https://otruyenapi.com/v1/api/home";
     private readonly string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "API", "Home.json");
@@ -32,14 +32,14 @@ public class HomeController : Controller
         httpClient = _httpClient;
         _logger = logger;
 
-         _categoryService = categoryService;
+        _categoryService = categoryService;
     }
 
     //
     public IActionResult Splash()
     {
         return View();
-        
+
     }
 
     //
@@ -55,9 +55,9 @@ public class HomeController : Controller
             _logger.LogInformation("===== Goi API 1 ====");
 
             // var response = await httpClient.GetAsync(api_Home);
-             
-                   var categoryList = _categoryService.GetCategoryList();
-                   
+
+            var categoryList = _categoryService.GetCategoryList();
+
             ViewBag.CategoryList = categoryList;
 
             // Đọc dữ liệu từ tệp JSON
@@ -82,7 +82,7 @@ public class HomeController : Controller
                     var mangaList = apiResponse.Data.InfoMangaList;
                     _logger.LogInformation("===== Thành công lấy mangaList ====");
 
-                      // Tìm kiếm 
+                    // Tìm kiếm 
                     if (!string.IsNullOrEmpty(searchName))
                     {
                         mangaList = mangaList
@@ -90,15 +90,18 @@ public class HomeController : Controller
                             (s.Name != null && s.Name.ToUpper().Contains(searchName.ToUpper())) ||
                             (s.Author != null && s.Author.ToUpper().Contains(searchName.ToUpper()))
                         )
-                        .DistinctBy(s=> s.Name)
+                        .DistinctBy(s => s.Name)
                         .ToList();
                     }
 
                     // lấy truyện nổi bật
-                    var featuredManga = mangaList
-                                        .OrderBy(m => Guid.NewGuid())
-                                        .Take(5)
-                                        .ToList();
+                    // var featuredManga = mangaList
+                    //                     .OrderBy(m => Guid.NewGuid())
+                    //                     .Take(5)
+                    //                     .ToList();
+                    var random = new Random();
+                    var featuredManga = mangaList.OrderBy(m => random.Next()).Take(5).ToList();
+
                     ViewBag.featuredManga = featuredManga;
 
                     // Lấy danh sách og_image

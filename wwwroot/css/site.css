@@ -192,3 +192,34 @@ body {
 {
   font-size: 14px;font-weight: 600;
 }
+
+
+.dropdown-menu-columns {
+  column-count: 3;
+  column-gap: 20px;
+  width: 300px;
+}
+
+  .dropdown-menu-columns .dropdown-item {
+      display: inline-block;
+      width: 100%;
+  }
+
+.dropdown-menu {
+  display: none;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+
+.nav_his_fa:hover{
+  background-color: #568a7067;
+  border-radius: 15px;
+}
+.nav_his_fa{
+  border-radius: 15px;
+  
+  font-weight: 600;
+}
