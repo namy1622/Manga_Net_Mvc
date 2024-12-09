@@ -1,11 +1,7 @@
 using BTL_WebManga.Areas.Manga.Models;
-using BTL_WebManga.Models;
 using BTL_WebManga.Services;
 using Manga.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Text.Json;
 
 namespace BTL_WebManga.Areas.Manga.Controllers
