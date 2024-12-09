@@ -136,7 +136,8 @@ HttpContext.Session.SetString("id_Manga", mangaDetails.Id);
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
             if (user == null)
-                return NotFound("Người dùng không tồn tại.");
+                // return NotFound("Người dùng không tồn tại.");
+                return RedirectToAction("Login","Account", new {area="Identity"});
 
             // Đọc dữ liệu từ file JSON
             if (!System.IO.File.Exists(jsonFilePath))

@@ -24,7 +24,7 @@ namespace BTL_WebManga.Areas.Manga.Controllers
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
             if (user == null)
-                return Ok("Bạn phải đăng nhập mới dùng được chức năng này");
+                return RedirectToAction("Login","Account", new {area="Identity"});
 
             var listReadingHistory = await _mangaContext.ReadingHistory
                 .Where(f => f.UserID == user.Id)
