@@ -1,0 +1,242 @@
+@* <h1>Day la DetailsManga</h1> *@
+@model Areas.Manga.Models.ViewModels.DetailsManga_ViewModel;
+@{
+ 
+}
+
+
+<div class=" mt-3 me-3 ms-3">
+    <div class="row ms-3 me-2">
+
+        <div class="col-md-8   card card-custom cotainer custom-border custom-shadow"
+            style="border: none; height: 450px;">
+            @if (Model.MangaDetails != null)
+            {
+                <div class="d-flex" style="">
+                    <div class="me-3 m-3 custom-border custom-shadow"
+                        style="height: 350px; width: 380px; border-radius: 6px;">
+
+                        <img src="https://otruyenapi.com/uploads/comics/@Model.MangaDetails.Thumb_url" alt="Ảnh truện"
+                            class="car-img w-100 h-100" style="background-color: rgb(130, 148, 206); border-radius: 6px;">
+                    </div>
+                    <div class="m-3"
+                        style="width:90%; height: 350px; display: flex; flex-direction: column; justify-content: space-between; ">
+
+                        @* var manga = detailManga.First();  *@
+                        <h5 class="card-title mt-2 " style="font-weight: 600; font-size: 40px;">@Model.MangaDetails.Name
+                        </h5>
+                        <hr class="mb-0 mt-0" />
+                        @* @if (@Model.MangaDetails.Author == null)
+                        {
+                            <p>Tác giả: Đang cập nhật...</p>
+                        }
+                        else
+                        {
+                            <p class="card-text info-box">Tác giả: @Model.MangaDetails.Author</p>
+                        } *@
+                        <div class="font-cus">
+                            Thể loại:
+                            @if (@Model.MangaDetails.Category != null &&
+                           @Model.MangaDetails.Category.Any())
+                            {
+                                @foreach (var category in @Model.MangaDetails.Category)
+                                {
+                                    @category.name
+                                    @if (category != @Model.MangaDetails.Category.Last())
+                                    {
+                                        <span>, </span> <!-- Thêm dấu phẩy nếu không phải là thể loại cuối cùng -->
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <p>Chưa có thể loại.</p>
+                            }
+                        </div>
+                        <p class="card-text info-box font-cus">Cập nhật: ...</p>
+                        <div class="d-flex font-cus">
+                            <form id="favouriteForm" method="post">
+                                @if (Model.IsFavourite)
+                                {
+                                    <button type="submit" class="btn btn-danger" asp-action="UnFavourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id" >
+                                        Hủy yêu thích
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-success" asp-action="Favourite" asp-controller="DetailsManga" asp-route-comicId="@Model.MangaDetails.Id">
+                                        Yêu thích
+                                    </button>
+                                }
+                            </form>
+                             
+                        </div>
+                        <div class="d-flex btn-group w-50 mt-0"
+                            style="height: 2.4em; align-items: flex-end; margin-bottom: 10px;">
+                            <a type="button" class="btn-info btn text-dark w-20 font-cus" style="font-size: 14px;" asp-area="Manga"
+                               asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.FirstOrDefault().link_chap" asp-route-comicId="@Model.MangaDetails.Id"
+                               asp-route-chapterName="@Model.ChapterData.FirstOrDefault().num_Chapter">
+                                Đọc từ đầu 
+                            </a>
+                            @if (Model.HasReadingHistory)
+                            {
+                                <a type="button" class="btn btn-success text-dark w-20 font-cus" style="font-size: 14px;"
+                                   asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-mangaId="@Model.MangaDetails.Id">
+                                    Đọc tiếp
+                                </a>
+                            }
+                            else
+                            {
+                                <a type="button" class="btn btn-success text-dark w-20 font-cus" style="font-size: 14px;"
+                                   asp-area="Manga" asp-controller="ReadManga" asp-action="Read" asp-route-linkchap="@Model.ChapterData.LastOrDefault().link_chap" asp-route-comicId="@Model.MangaDetails.Id"
+                                   asp-route-chapterName="@Model.ChapterData.LastOrDefault().num_Chapter">
+                                    Chap mới nhất
+                                </a>
+                            }
+                            
+
+                            
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>Không tìm thấy thông tin manga.</p>
+            }
+
+        </div>
+        @* <div class="col-md-1"></div> *@
+
+        <div class="col-md-4 me-0 card card-custom  " style="background-color:#B4B4B2; border:none">
+            <div class="card custom-border custom-shadow m-0 mt-0 me-0 ps-3 pt-3 pb-3"
+                style="height: 450px;background-color:#5b5b59;">
+                <p class="m-0 pe-4 d-flex justify-content-center " style="font-weight: 600;font-size: 18px;">Chapter</p>
+                <hr>
+                <div class="number-container me-0">
+                    @foreach (var number in Model.ChapterData)
+                    {
+                        <a class="number-item"
+                           asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+                           asp-route-linkchap="@number.link_chap"
+                          
+                           asp-route-comicId="@Model.MangaDetails.Id" 
+                           asp-route-chapterName="@number.num_Chapter">
+                            @number.num_Chapter
+                        </a>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* ---- *@
+    <div class=" col-md-12   mt-5  me-2 ms-2" style=" ">
+
+        <h3>Truyện tương tự</h3>
+        <hr>
+        <div class="border border me-3">
+            @if (Model.RelatedMangas != null)
+            {
+                var half = Model.RelatedMangas.Count() / 2;
+                <!-- Chia danh sách thành 2 phần -->
+                var firstHalf = Model.RelatedMangas.Take(half).ToList();
+                var secondHalf = Model.RelatedMangas.Skip(half).ToList();
+
+                <div class=" flex-nowrap overflow-auto ms-0" style="height: 410px;">
+                    <div class="d-flex ms-3 mt-2">
+                        <!-- Hiển thị phần đầu tiên -->
+                        @foreach (var manga in firstHalf)
+                        {
+                            var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                            <div class="col-3 col-sm-2 col-md-2 col-lg-1 mb-0  hover-cus">
+                                <div class="card-cus card position-relative custom-border custom-shadow"
+                                    style="width: 6em; height: 170px;">
+
+                                    <img class="custom-border custom-shadow mt-0" src="@urlImage" alt="@manga.Name"
+                                        style="width: 100%; height: 70%; object-fit: cover;" />
+
+                                    <a class="card-body position-absolute"
+                                        style="bottom: 0; left: 0; text-decoration:none; color: black; width: 100%; height: 60px; padding-top: 15px; padding-left: 2px; padding-right: 2px;"
+                                        asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-slug="@manga.Slug">
+                                        <p style="font-size: 12px; font-weight: 500;" class="card-title w-100 text-left">
+                                            @manga.Name</p>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <br>
+                    <div class="d-flex ms-3"  >
+                        <!-- Hiển thị phần thứ hai -->
+                        @foreach (var manga in secondHalf)
+                        {
+                            var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                            <div class="col-3 col-sm-2 col-md-2 col-lg-1 mb-0 hover-cus">
+                                <div class="card-cus card position-relative custom-border custom-shadow"
+                                    style="width: 6em; height: 170px;">
+
+                                    <img class="custom-border custom-shadow mt-0" src="@urlImage" alt="@manga.Name"
+                                        style="width: 100%; height: 70%; object-fit: cover;" />
+
+                                    <a class="card-body position-absolute"
+                                        style="bottom: 0; left: 0; text-decoration:none; color: black; width: 100%; height: 60px; padding-top: 15px; padding-left: 2px; padding-right: 2px;"
+                                        asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-slug="@manga.Slug">
+                                        <p style="font-size: 12px; font-weight: 500;" class="card-title w-100 text-left">
+                                            @manga.Name</p>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .row {
+        display: flex;
+        flex-wrap: nowrap;
+        /* Không cho phép các phần tử xuống dòng */
+        overflow-x: auto;
+        /* Cho phép cuộn ngang */
+    @* padding-bottom: 15px; /* Thêm không gian ở dưới cùng */ *@
+    }
+</style>
+
+<style>
+    .number-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        /* Chia thành 5 cột */
+        gap: 7px;
+
+        overflow-y: auto;
+    }
+
+    .number-item {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 10px;
+        color: black;
+        text-decoration: none;
+        background-color: #5be1b2;
+    }
+
+    .font-cus{
+        font-weight: 600;
+    }
+</style>
+
+
+
+
+
+<hr>
+@*================================== *@
+
+
+

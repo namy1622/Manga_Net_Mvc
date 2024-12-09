@@ -1,0 +1,211 @@
+@using Manga.Home.Models
+@* <h1>Day la trang doc</h1> *@
+
+@* @model Areas.Manga.Models.ViewModels.ReadManga_ViewModel; *@
+
+@model Areas.Manga.Models.ViewModels.ReadManga_ViewModel;
+
+
+@{
+    var baseImage = "https://sv1.otruyencdn.com/";
+    @* var chapter_path = $"{@Model.data_Read.Chapter_Path}" + "/"; *@
+    var chapter_path = Model?.Chapter_path != null ? $"{Model.Chapter_path}/" : "default-path/";
+
+    @* var details_chap =  (Areas.Manga.Models.ViewModels.DetailsManga_ViewModel)ViewData["Details_Chap"]; *@
+        @* var details_chap =  TempData["data_chap"] as List<ChapterData>; *@
+
+        @* var details_chap = ViewData["Details_Chap"] as List<Chapter>; *@
+
+    var id_manga = Model.id_manga;
+
+    var chapter_data = Model.ChapterData;
+    var prev_chap = Model.prev_chap;
+    var next_chap = Model.next_chap;
+
+    @* if(prev_chap.num_Chapter == "0"){
+
+    } *@
+
+}
+<div class="row">
+
+    <div class="col-md-2 h100 " style="background-color: rgb(127, 143, 130);">
+        <div class="btn-group">
+                <h2>@ViewData["Details_Chap"]</h2>
+           
+        </div> 
+    </div>
+
+    <div class="container d-flex flex-column align-items-center py-4 col-md-8 ">
+    
+    <div>
+        <div class="d-flex">
+        <a class="btn btn-outline-success"
+             asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+                           asp-route-linkchap="@prev_chap.link_chap"
+                          
+                           asp-route-comicId=  "@id_manga"
+                           
+                           asp-route-chapterName="@prev_chap.num_Chapter"
+        >
+            Chap trước
+        </a>
+        <div class="dropdown ms-5 me-5 btn btn-success" style="width: 200px;">
+            <div class="dropdown-toggle text-white" data-bs-toggle="dropdown">
+                <strong>Chap @ViewData["numChap"]</strong>
+            </div>
+            <div class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
+                @if(chapter_data != null){
+                    foreach(var dataChap in chapter_data){
+                        <a class="dropdown-item" 
+                            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+                           asp-route-linkchap="@dataChap.link_chap"
+                          
+                           asp-route-comicId=  "@id_manga"
+                           asp-route-chapterName="@dataChap.num_Chapter"
+                        >
+                            Chap @dataChap.num_Chapter
+
+                            
+                        </a>
+                    }
+                    
+                }
+                else{
+                    <a class="dropdown-item" href="#">null</a>
+                }
+            </div>
+        </div>
+
+        <a class="btn btn-outline-success"
+            asp-route-linkchap="@next_chap.link_chap"
+            asp-route-numChap = "@next_chap.num_Chapter" 
+            asp-route-comicId=  "@id_manga"
+            asp-route-chapterName="@next_chap.num_Chapter"
+        >
+            Chap sau
+        </a>
+        </div>
+    </div>
+    
+
+        
+        <hr>
+
+        @if (Model?.chapter_Images != null && Model.chapter_Images.Any())
+        {
+            @foreach (var page in Model.chapter_Images)
+            {
+                var url_page = baseImage + chapter_path + page.Image_File;
+
+                <div class="page-wrapper image-read-cus">
+                    <img class="img-fluid shadow rounded image-cover " src="@url_page" alt="Ảnh không tải được">
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Không có hình ảnh để hiển thị.</p>
+        }
+
+<hr>
+         <div>
+        <div class="d-flex">
+        <a class="btn btn-outline-success"
+            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+            asp-route-linkchap="@prev_chap.link_chap"
+                          
+            asp-route-comicId=  "@id_manga"
+            asp-route-chapterName="@prev_chap.num_Chapter"
+        >
+            Chap trước
+        </a>
+        <div class="dropdown ms-5 me-5 btn btn-success" style="width: 200px;">
+            <div class="dropdown-toggle text-white" data-bs-toggle="dropdown">
+                <strong>Chap @ViewData["numChap"]</strong>
+            </div>
+            <div class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
+                @if(Model.ChapterData != null){
+                    foreach(var dataChap in Model.ChapterData){
+                        <a class="dropdown-item" 
+                            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+                           asp-route-linkchap="@dataChap.link_chap"
+                           
+                           asp-route-comicId=  "@id_manga"
+                           asp-route-chapterName="@dataChap.num_Chapter"
+                        >
+                            Chap @dataChap.num_Chapter
+                        </a>
+                    }
+                    
+                }
+                else{
+                    <a class="dropdown-item" href="#">null</a>
+                }
+            </div>
+        </div>
+
+        <a class="btn btn-outline-success"
+            asp-area="Manga" asp-controller="ReadManga" asp-action="Read"
+            asp-route-linkchap="@next_chap.link_chap"
+            asp-route-numChap = "@next_chap.num_Chapter" 
+            asp-route-comicId=  "@id_manga"
+            asp-route-chapterName="@next_chap.num_Chapter"
+        >
+            Chap sau
+        </a>
+        </div>
+    </div>
+    </div>
+
+    <div class="col-md-2 h100" style="background-color: rgb(127, 143, 130);">RIGHT</div>
+
+    
+</div>
+
+<style>
+    /* CSS cho phần ảnh */
+.page-wrapper {
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Đảm bảo ảnh luôn nằm giữa */
+    max-width: 800px; /* Giới hạn chiều rộng ảnh */
+    margin: auto;
+    overflow: hidden; /* Ẩn phần dư nếu ảnh vượt khung */
+    @* aspect-ratio: 16 / 9; /* Thiết lập tỷ lệ ảnh (16:9 hoặc 4:3, tuỳ chỉnh) */ *@
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-wrapper img {
+    max-width: 100%; /* Ảnh không vượt quá khung chứa */
+    height: auto; /* Giữ tỉ lệ gốc */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Bo góc cho ảnh */
+}
+
+/* Ảnh có hiệu ứng cover */
+.image-cover {
+
+    border-left: 3px solid rgb(0, 0, 0);
+    border-right: 3px solid rgb(0, 0, 0);
+    width: 100%; /* Đảm bảo ảnh phủ toàn khung */
+    height: 100%; /* Phủ toàn chiều cao khung */
+    object-fit: fill; /* Tương tự background-size: cover */
+    object-position: center; /* Đặt trung tâm ảnh */
+    transition: transform 0.3s ease-in-out; /* Hiệu ứng khi hover */
+}
+
+.image-read-cus{
+    
+     box-shadow: 
+        10px 0px 20px 0 rgba(0, 0, 0, 0.8), /* Bóng lệch phải */
+        -10px 0px 20px 0 rgba(0, 0, 0, 0.8); /* Bóng lệch trái */
+}
+
+
+/* Hiệu ứng phóng to nhẹ khi hover */
+
+
+</style>

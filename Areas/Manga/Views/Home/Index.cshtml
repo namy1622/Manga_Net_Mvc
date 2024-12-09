@@ -1,0 +1,149 @@
+﻿@using Microsoft.IdentityModel.Tokens
+
+@{
+    ViewData["Title"] = "Trang chủ";
+     @* var mangaList = ViewBag.MangasInPage as List<BTL_WebManga.Areas.Manga.Models.ComicModel>; *@
+}
+
+@{
+    var imgUrl = "https://www.gettyimages.in/gi-resources/images/Homepage/Hero/UK/CMS_Creative_164657191_Kingfisher.jpg";
+
+    @* var mangaList = ViewBag.MangaList as List<Manga.Home.Models.InfoMangaModels>; *@
+    var mangaList = ViewBag.MangasInPage as List<Manga.Home.Models.InfoMangaModels>;
+    var featured = ViewBag.featuredManga as List<Manga.Home.Models.InfoMangaModels>;
+    @* var ogImages = ViewBag.OgImages as List<Manga.Home.Models.SeoOnPage>; *@
+
+}
+
+
+
+<div class="row">
+
+    <div style="background: #21A691; margin-top: -50px;" class="col-md-2 ">
+        <div style="margin-top: 100px">
+            <div class="d-flex flex-column align-items-center">
+
+                    <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/789bet.png" alt="">
+                    </div>
+                    <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/adv_1.jpg" alt="">
+                    </div>
+                    <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/adv_2.jpg" alt="">
+                    </div>
+                    <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/taixiu.png" alt="">
+                    </div>
+                    <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/taixiu_2.jpg" alt="" style="max-width: 100%;object-fit: cover">
+                    </div>
+
+                     <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/789bet.png" alt="">
+                    </div>
+                    <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/adv_1.jpg" alt="">
+                    </div>
+                     <div class="ms-3 mb-3">
+                       <img src="~/Img/advertisement/789bet.png" alt="">
+                    </div>
+                    
+                
+            </div>
+        </div>
+    </div>
+
+    <div class=" col-md-10 container  mt-0">
+
+        @* =============================== *@
+
+        <div class="container mt-4  pe-1 ps-1 " style="height: 600px; border:none ;">
+            <!-- Tiêu đề -->
+            <div class=" mb-1 mt-2">
+                <h2 class="w-600 ">Truyện Nổi Bật @featured.Count</h2>
+
+            </div>
+
+            <!-- Carousel -->
+            <div id="featuredStoriesCarousel" style="border: none; border-radius: 15px;"
+                class="carousel slide  custom-border custom-shadow" data-bs-ride="carousel">
+
+                <div class="carousel-inner custom-border custom-shadow"
+                    style="height: 544px; position: relative; border-radius: 15px;">
+
+                    @if (featured == null || !featured.Any())
+                    {
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <img src="https://via.placeholder.com/900" 
+                                class="img-fluid" style="height: 544px; width: 75%;" alt="Truyện không có">
+                        </div>
+                    }
+                    else
+                    {
+                        int index = 0; // Biến đếm để xác định slide đầu tiên
+                        foreach (var m in featured)
+                        {
+                            var img = $"https://otruyenapi.com/uploads/comics/{m.Thumb_url}";
+                            <div class="carousel-item @(index == 0 ? "active" : "")">
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <img src="@img" 
+                                        class="img-fluid" style="height: 544px; width: 75%;" alt="@m.Name">
+                                </div>
+                            </div>
+                            index++;
+                        }
+                    }
+                    
+                </div>
+
+
+                <!-- Controls -->
+                <button class="btn-prev" type="button" data-bs-target="#featuredStoriesCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="btn-next" type="button" data-bs-target="#featuredStoriesCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        @* ================================ *@
+        <div class="row justify-content-center mt-5">
+            @if (mangaList != null)
+            {
+                foreach (var manga in mangaList)
+                {
+
+                    var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                    <div class="  col-10 col-sm-5 col-md-3 col-lg-2 mb-3">
+                        <div class="card-cus card position-relative custom-border custom-shadow hover-cus"
+                            style=" width: 11em; height: 230px;">
+
+                            <img class="css-card img-card custom-border custom-shadow" src="@urlImage" alt="@manga.Name" />
+
+                            <a class="card-manga card-body position-absolute" 
+                                asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-slug="@manga.Slug">
+                                <p class="name-card card-title w-100 text-left">@manga.Name</p>
+                                @* <p class="card-text">@manga.Slug</p> *@
+                                @* <a href="#" class=" btn-i btn">Click Card</a> *@
+                            </a>
+                        </div>
+                    </div>
+                    <br>
+
+                }
+            }
+
+        </div>
+<partial class="mt-3" name="_Paging" model="@ViewBag.pagingModel" />
+    </div>
+    
+
+
+    @* <div class="col-md-1">
+
+    </div> *@
+
+</div>

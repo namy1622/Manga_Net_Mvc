@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Manga.Home.Models.InfoMangaModels>
+
+<div class="container mt-4 pe-1 ps-1">
+    <h2 class="w-600">Danh sách Manga Yêu Thích</h2>
+    <div class="row mt-5 justify-content-start">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var manga in Model)
+            {
+                var urlImage = $"https://otruyenapi.com/uploads/comics/{manga.Thumb_url}";
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-3">
+                    <div class="card custom-border custom-shadow hover-cus" style="width: 100%; position: relative;">
+
+                        <!-- Ảnh của Manga -->
+                        <div class="overflow-hidden" style="height: 160px;">
+                            <img class="card-img-top img-fluid"
+                                 src="@urlImage" alt="@manga.Name"
+                                 style="object-fit: cover; height: 100%; width: 100%;" />
+                        </div>
+
+                        <!-- Phần thông tin bên dưới ảnh -->
+                        <div class="card-body p-2">
+                            <!-- Hàng 1: Tên truyện -->
+                            <a class="card-title text-truncate d-block"
+                               asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-slug="@manga.Slug"
+                               style="font-weight: bold;">
+                                @manga.Name
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h3>Hiện tại không có truyện yêu thích nào cả</h3>
+        }
+    </div>
+</div>

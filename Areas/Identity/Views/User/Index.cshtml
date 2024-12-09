@@ -1,0 +1,148 @@
+@using Microsoft.IdentityModel.Tokens
+@model UserListModel
+@{
+    ViewData["Title"] = "Danh sách các thành viên";
+}
+<div class="container">
+<h2 class="d-flex justify-content-center text-align-center mt-3">@ViewData["Title"] </h2>
+<hr class="container">
+
+<p class="d-flex justify-content-center bg-success container" style="font-size: 18px; font-weight: 500;">Tổng số Member:
+    @Model.totalUsers </p>
+
+<hr class="container">
+<partial name="_StatusMessage"></partial>
+
+
+<table class="table container">
+    <tr class="row " 
+        style="background-color: rgb(127, 255, 155); border-radius: 10px;">
+        <th class="col-md-3">Tên user</th>
+        <th class="col-md-2">Tài khoản</th>
+        <th class="col-md-2">Luợt truy cập</th>
+        <th class="col-md-3"></th>
+        <th class="col-md-1">Tác vụ</th>
+    </tr>
+    @foreach (var user in Model.users)
+    {
+        
+        <tr class="row" style="background-color: rgb(174, 220, 189); margin-top: 5px; border-radius: 10px;">
+            <td class="col-md-3 ">
+                <div style="font-weight:600; font-size: 24px;">__| @user.UserName </div>
+
+                <div>
+                    <hr>_______|
+                    @if (string.IsNullOrEmpty(user.RoleNames))
+                    {
+                        <a class="text-dark" asp-action="AddRole" asp-route-id="@user.Id" asp-route-nameUser="@user.UserName">+
+                            Thêm roles</a>
+                    }
+                    else
+                    {
+                        <a asp-action="AddRole" asp-route-id="@user.Id">@user.RoleNames</a>
+                    }
+                </div>
+
+            </td>
+            <td class="col-md-2 d-flex align-items-center">
+                @if (@user.ProviderLogin.IsNullOrEmpty())
+                {
+                    <p style="font-weight: 500;">MangaHay</p>
+                }
+                else
+                {
+                    <p style="font-weight: 500;"> @user.ProviderLogin</p>
+                }
+
+            </td>
+            <td class="col-md-2">
+                <p> @user.VisitCount</p>
+                
+                <hr>
+                <p>Lần gần nhất: <br>@if (Convert.ToString(@user.LastVisit) == "01-Jan-01 12:00:00 AM")
+                    {
+                    <p>-- null</p>
+                    }
+                    else
+                    {
+                    <p>-- @user.LastVisit</p>
+                    } </p>
+                @* @user.visit.LastVisit *@
+
+            </td>
+            <td class="col-md-3 d-flex align-items-center justify-content-center">
+                 <a class="nav-link text-dark" 
+                    asp-area="Identity"    
+                    asp-controller="Manage" 
+                    asp-action="Index" 
+                    asp-route-id="@user.Id"
+                    title="Chi tiết">
+                      Chi tiết
+                </a>
+            </td>
+            <td class="col-md-1 d-flex align-items-center">
+                <div class="dropdown">
+                    <a class="btn  d-flex justify-content-center btn-outline-success" href="#"
+                        style="width: 50px; height: 50px; border-radius: 25px;" id="managedropdownmenu"
+                        data-bs-toggle="dropdown">
+                        <img src="~/Icon/list_option.png">
+
+                    </a>
+                    <div class="dropdown-menu " 
+                            aria-labelledby="managedropdownmenu"
+                            style="border: 2px solid green;">
+                        <a class=" dropdown-item btn btn-success btn-sm p-3" asp-action="SetPassword" asp-route-id="@user.Id">
+                            Đặt mật khẩu
+                        </a>
+                        
+                        <form class="" asp-action="LockAccount" method="post">
+                            <input type="hidden" name="id" value="@user.Id"/>
+                            @if(user.LockoutEnd!= null && user.LockoutEnd > DateTimeOffset.Now)
+                            {
+                                @* -- Hien thi nut mo khoa *@
+                                <button type="submit" class="dropdown-item bg-success btn btn-sm p-3">
+                                    <p>Mở khóa</p>
+                                </button>
+                            }
+                            else
+                            {
+                                @* Hien thi nut mo khoa *@
+                                <button type="submit" class="dropdown-item btn-outline-success btn  btn-sm p-3">
+                                    Mở/Khóa tài khoản
+                                </button>
+                            }
+                        </form>
+                        
+                        @* <a class=" dropdown-item btn btn-success btn-sm p-3" asp-action="SetPassword" asp-route-id="@user.Id">
+                            Khóa tài khoản
+                        </a> *@
+                        @* <a class=" dropdown-item btn btn-success btn-sm p-3" asp-action="SetPassword" asp-route-id="@user.Id">
+                            Xóa tài khoản
+                        </a> *@
+
+                        <form method="post" asp-action="DeleteAccount">
+                            <input type="hidden" name="id" value="@user.Id"/>
+                            <button
+                                type="submit" 
+                                class=" dropdown-item btn btn-success btn-sm p-3"
+                            > Xóa tài khoản</button>
+                        </form>
+                        
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+    }
+</table>
+@{
+    var pagingmodel = new PagingModel()
+            {
+                currentpage = Model.currentPage,
+                countpages = Model.countPages,
+                generateUrl = (int? p) => Url.Action("Index", new { p = p })
+            };
+}
+
+<partial name="_Paging" model="@pagingmodel" />
+</div>

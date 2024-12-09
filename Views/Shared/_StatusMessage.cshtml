@@ -1,0 +1,26 @@
+@{
+    var mgs = TempData["StatusMessage"] as string;
+
+    var mgs_lockout = TempData["StatusMessage_Lockout"] as string;
+}
+
+@if (!String.IsNullOrEmpty(mgs))
+{
+    var statusMessageClass = mgs.StartsWith("Error") ? "danger" : "success";
+    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+        <button  class="btn-close" data-bs-dismiss="alert" 
+            aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        @mgs
+    </div>
+}
+
+@if (!String.IsNullOrEmpty(mgs_lockout))
+{
+    var statusMessageClass = mgs_lockout.EndsWith(".") ? "danger" : "success";
+    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+        <button  class="btn-close" data-bs-dismiss="alert" 
+            aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        @mgs_lockout
+    </div>
+}
+
