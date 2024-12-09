@@ -5,6 +5,7 @@ using Manga.Home.Models;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Manga.Data;
+using BTL_WebManga.Services;
 
 namespace Areas.Manga.Controllers
 {
@@ -12,16 +13,22 @@ namespace Areas.Manga.Controllers
     public class FavouriteComicController : Controller
     {
         private readonly MangaContext _mangaContext;
+         private readonly CategoryService _categoryService;
         private readonly string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "API", "Home.json");
 
-        public FavouriteComicController(MangaContext mangaContext)
+        public FavouriteComicController(MangaContext mangaContext,CategoryService categoryService)
         {
             _mangaContext = mangaContext;
+
+             _categoryService = categoryService;
         }
 
 
         public async Task<IActionResult> Index()
         {
+             var categoryService = _categoryService.GetCategoryList();
+            ViewBag.CategoryList = categoryService;
+
             var userName = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 

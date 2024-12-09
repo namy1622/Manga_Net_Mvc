@@ -1,4 +1,5 @@
-﻿using Manga.Data;
+﻿using BTL_WebManga.Services;
+using Manga.Data;
 using Manga.Home.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,16 +11,21 @@ namespace BTL_WebManga.Areas.Manga.Controllers
     public class ReadingHistoryController : Controller
     {
         private readonly MangaContext _mangaContext;
+        private readonly CategoryService _categoryService;
         private readonly string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "API", "Home.json");
 
-        public ReadingHistoryController(MangaContext mangaContext)
+        public ReadingHistoryController(MangaContext mangaContext,CategoryService categoryService)
         {
             _mangaContext = mangaContext;
+            _categoryService = categoryService;
         }
 
 
         public async Task<IActionResult> Index()
         {
+            var categoryService = _categoryService.GetCategoryList();
+            ViewBag.CategoryList = categoryService;
+
             var userName = User.Identity.Name;
             var user = await _mangaContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
 
