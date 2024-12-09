@@ -5,7 +5,8 @@ using Manga.Home.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
+using NuGet.Protocol;
+
 
 namespace Areas.Manga.Controllers
 {
@@ -187,7 +188,7 @@ HttpContext.Session.SetString("id_Manga", mangaDetails.Id);
 
             var jsonString = await System.IO.File.ReadAllTextAsync(jsonFilePath);
 
-            var apiResponse = Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse_InfoManga>(jsonString, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
