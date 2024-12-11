@@ -98,9 +98,13 @@ else
     </div>
 
     <!-- Phân trang -->
-    <div class="mt-4">
+    @if(ViewBag.pagingModel != null)
+    {
+         <div class="mt-4">
         <partial name="_Paging" model="@ViewBag.pagingModel" />
     </div>
+    }
+   
 </div>
 <div class="col-md-1"></div>
     

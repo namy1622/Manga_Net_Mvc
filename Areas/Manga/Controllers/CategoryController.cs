@@ -45,9 +45,16 @@ namespace BTL_WebManga.Areas.Manga.Controllers
                     if (!string.IsNullOrEmpty(slug))
                     {
                         mangaList = mangaList.Where(ci => ci.CategoryList.Any(c => c.SlugCategory == slug)).ToList();
-                        if (!Enumerable.Any<ComicModel>(mangaList))
+                        // if (!Enumerable.Any<ComicModel>(mangaList))
+                        // {
+                        //     ViewBag.MangaList = null;
+                        //     return base.View();
+                        // }
+
+                        if(!mangaList.Any())
                         {
                             ViewBag.MangaList = null;
+                            ViewBag.pagingModel = null;
                             return base.View();
                         }
 
@@ -61,11 +68,18 @@ namespace BTL_WebManga.Areas.Manga.Controllers
                     else if (selectedCategories != null && selectedCategories.Any())
                     {
                         mangaList = mangaList.Where(manga => manga.CategoryList.Any(c => selectedCategories.Contains(c.SlugCategory))).ToList();
-                        if (!Enumerable.Any<ComicModel>(mangaList))
+                        // if (!Enumerable.Any<ComicModel>(mangaList))
+                        // {
+                        //     ViewBag.MangaList = null;
+                        //     return base.View();
+                        // }
+                        if(!mangaList.Any())
                         {
                             ViewBag.MangaList = null;
+                            ViewBag.pagingModel = null;
                             return base.View();
                         }
+
 
                         ViewBag.MangaList = mangaList;
 

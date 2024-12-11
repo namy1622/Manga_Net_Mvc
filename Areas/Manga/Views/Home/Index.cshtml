@@ -86,10 +86,12 @@
                         {
                             var img = $"https://otruyenapi.com/uploads/comics/{m.Thumb_url}";
                             <div class="carousel-item @(index == 0 ? "active" : "")">
-                                <div class="d-flex justify-content-center align-items-center h-100">
+                                <a class="d-flex justify-content-center align-items-center h-100"
+                                    asp-area="Manga" asp-controller="DetailsManga" asp-action="Details" asp-route-slug="@m.Slug"
+                                >
                                     <img src="@img" 
                                         class="img-fluid" style="height: 544px; width: 75%;" alt="@m.Name">
-                                </div>
+                                </a>
                             </div>
                             index++;
                         }

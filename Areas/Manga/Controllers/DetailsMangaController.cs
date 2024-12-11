@@ -18,6 +18,8 @@ namespace Areas.Manga.Controllers
         private readonly ILogger<DetailsMangaController> _logger;
         private readonly MangaContext _mangaContext;
 
+       
+
         private readonly IMemoryCache _cache;
 
         // private readonly string api_Home = "https://otruyenapi.com/v1/api/home";
@@ -32,19 +34,21 @@ namespace Areas.Manga.Controllers
             _logger = logger;
             _cache = cache;
             _mangaContext = mangaContext;
+
+          
         }
 
         
 
-        public IActionResult Splash(string slug)
+        public IActionResult Splash()
         {
-            ViewData["AreaName"] = "Manga";      
-            ViewData["ControllerName"] = "DetailsManga"; // Controller
-            ViewData["ActionName"] = "Details"; // Action
+            // ViewData["AreaName"] = "Manga";      
+            // ViewData["ControllerName"] = "DetailsManga"; // Controller
+            // ViewData["ActionName"] = "Details"; // Action
 
-            ViewData["Route"] = "details";
-            ViewData["Id"] = slug; // ID hoặc các tham số khác
-            return NotFound("////");
+            // ViewData["Route"] = "details";
+            // ViewData["Id"] = slug; // ID hoặc các tham số khác
+            return View();
             
         }
         //-----------------------------------------------------------------------------------------------------------        
@@ -52,6 +56,8 @@ namespace Areas.Manga.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(string? slug)
         {
+           
+            
             var viewModel = new DetailsManga_ViewModel();
 
             if (string.IsNullOrEmpty(slug))

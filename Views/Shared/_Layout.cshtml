@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@* ﻿@{
+@{
     var categoryList = ViewBag.CategoryList as List<BTL_WebManga.Areas.Manga.Models.CategoryModel>;
-} *@
+}
 
 <head>
     <meta charset="utf-8" />
@@ -13,9 +13,10 @@
     <title>@ViewData["Title"] - BTL_WebManga</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/BTL_WebManga.styles.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/BTL_WebManga.styles.css" asp-append-version="true" /> *@
 
     <link rel="stylesheet" href="~/css/Home/home-page.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/css_custom/css_cus.css" asp-append-version="true">
 </head>
 
 <body>
@@ -23,7 +24,7 @@
         <nav class=" nav navbar navbar-expand-sm navbar-toggleable-sm  border-bottom box-shadow  app-navbar">
             <div class="container-fluid">
 
-                <partial name="_MenumanagePartial" />
+                @* <partial name="_MenumanagePartial" /> *@
 
                 <a class=" name-branch navbar-brand" asp-area="Manga" asp-controller="Home"
                     asp-action="Index">MangaHay</a>
@@ -35,31 +36,50 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class=" navbar-nav flex-grow-1 ">
 
-                         <li class="nav-item dropdown">
-                            <a class="dropdown-toggle nav-link text-white" asp-area="Manga" asp-controller="Category" asp-action="Index" role="button" id="navbarDropdown" aria-expanded="false">
+                        <li class="nav-item dropdown">
+                            <a class="dropdown-toggle nav-link text-white nav_his_fa" asp-area="Manga" asp-controller="Category"
+                                asp-action="Index" role="button" id="navbarDropdown" aria-expanded="false">
                                 Thể loại
 
                                 @* @categoryList.Count *@
                             </a>
-                            @* <ul class="dropdown-menu dropdown-menu-columns" aria-labelledby="navbarDropdown" style="width: auto;">
+                            <ul class="dropdown-menu dropdown-menu-columns" aria-labelledby="navbarDropdown"
+                                style="width: auto;">
                                 @if (categoryList != null)
                                 {
                                     @foreach (var item in categoryList)
                                     {
-                                        <li><a class="dropdown-item" asp-area="Manga" asp-controller="Category" asp-action="Index" asp-route-Slug="@item.SlugCategory">@item.Name</a></li>
+                                        <li><a class="dropdown-item" asp-area="Manga" asp-controller="Category"
+                                                asp-action="Index" asp-route-Slug="@item.SlugCategory">@item.Name</a></li>
                                     }
                                 }
-                            </ul> *@
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="dropdown-item nav-link text-white nav_his_fa" asp-area="Manga" asp-controller="FavouriteComic"
+                                asp-action="Index">
+                                Danh sách yêu thích
+                            </a>
                         </li>
 
-                  
+                        <li>
+                            <a class="dropdown-item nav-link text-white nav_his_fa" asp-area="Manga" asp-controller="ReadingHistory"
+                                asp-action="Index">
+                                Lịch sử xem
+                            </a>
+
+                        </li>
+
+
+
                     </ul>
 
 
-                     <form asp-controller="Home" asp-action="Index" method="get">
+                    <form asp-controller="Home" asp-action="Index" method="get">
                         <div class="d-flex nav navbar-nav navbar-right" style="margin-right:10%;">
                             <div class="search input-group-prepend d-flex justify-content-center">
-                                <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện" name="searchName">
+                                <input type="text" class="search-input form-control" placeholder="Tìm kiếm truyện"
+                                    name="searchName">
                                 <button class="search-icon input-group-text">
                                     <img src="~/Icon/search.png" alt="Search">
                                 </button>

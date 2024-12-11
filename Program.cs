@@ -23,12 +23,17 @@ builder.Services.AddControllersWithViews();
 // cau hinh chuoi ket noi den SqlServer
 builder.Services.AddDbContext<MangaContext>(options =>
 {
-    //string connectString = builder.Configuration.GetConnectionString("AppMvcConnectionString");
+   
     options.UseSqlServer(builder.Configuration.GetConnectionString("Web_Manga"));
 });
-// Đăng ký dịch vụ của bạn, ví dụ:
-builder.Services.AddControllersWithViews();
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddMemoryCache(options =>
+{
+    options.SizeLimit = null; // Không giới hạn kích thước bộ nhớ (hoặc thiết lập giá trị cụ thể)
+});
+
 
 builder.Services.AddDistributedMemoryCache(); // Thêm bộ nhớ cache phân phối (Distributed Cache)
 builder.Services.AddSession(options =>
@@ -48,19 +53,8 @@ builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<PreloadService>();
 
 
-builder.Services.AddHttpClient();
 builder.Services.AddScoped<CategoryService>();
 
-
-
-//--- Dang Ki Lop Nhu 1 Dich Vu -------------------------------
-// builder.Services.AddSingleton<ProductService>();
-// cach khac
-// builder.Services.AddSingleton<ProductService, ProductService>();
-// builder.Services.AddSingleton(typeof(ProductService));
-// builder.Services.AddSingleton(typeof(ProductService), typeof(ProductService));
-
-// builder.Services.AddSingleton<PlanetService>();
 //----------------------------------------------------------
 builder.Services.Configure<RazorViewEngineOptions>(options =>
 {
